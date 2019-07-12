@@ -7,17 +7,33 @@ import java.util.concurrent.Callable;
 public class SmartQueryFactory implements QueryFactory {
 
     private final Callable<Connection> source;
-    private DialectTranslation translation;
-    private boolean closeConnections;
+    private final DialectTranslation translation;
+    private final boolean closeConnections;
+
+    public SmartQueryFactory(Callable<Connection> source, DialectTranslation translation, boolean closeConnections) {
+        this.source = source;
+        this.translation = translation;
+        this.closeConnections = closeConnections;
+    }
+
+    public SmartQueryFactory(Callable<Connection> source, boolean closeConnections) {
+        this(source, DialectTranslation.DEFAULT, closeConnections);
+    }
 
     public SmartQueryFactory(Callable<Connection> source) {
-        this.source = source;
-        this.translation = DialectTranslation.DEFAULT;
-        this.closeConnections = false;
+        this(source, true);
+    }
+
+    public SmartQueryFactory(DataSource source, DialectTranslation translation, boolean closeConnections) {
+        this(source::getConnection, translation, closeConnections);
+    }
+
+    public SmartQueryFactory(DataSource source, boolean closeConnections) {
+        this(source, DialectTranslation.DEFAULT, closeConnections);
     }
 
     public SmartQueryFactory(DataSource source) {
-        this(source::getConnection);
+        this(source, true);
     }
 
     @Override
@@ -27,13 +43,5 @@ public class SmartQueryFactory implements QueryFactory {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void setTranslation(DialectTranslation translation) {
-        this.translation = translation;
-    }
-
-    public void setCloseConnections(boolean closeConnections) {
-        this.closeConnections = closeConnections;
     }
 }

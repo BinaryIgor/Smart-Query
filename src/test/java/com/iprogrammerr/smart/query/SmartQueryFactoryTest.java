@@ -23,9 +23,8 @@ public class SmartQueryFactoryTest {
 
         String suffix = " WHERE id = 1";
 
-        SmartQueryFactory factory = new SmartQueryFactory(() -> connection);
-        factory.setCloseConnections(false);
-        factory.setTranslation(sql -> sql + suffix);
+        SmartQueryFactory factory = new SmartQueryFactory(() -> connection, sql -> sql + suffix,
+            false);
 
         SmartQuery query = (SmartQuery) factory.newQuery();
         query.sql("DELETE FROM author").execute();
