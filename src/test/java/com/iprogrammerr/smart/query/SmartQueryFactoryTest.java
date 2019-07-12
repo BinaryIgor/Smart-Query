@@ -8,6 +8,8 @@ public class SmartQueryFactoryTest {
 
     @Test
     public void createsSmartQuery() {
-        MatcherAssert.assertThat(new SmartQueryFactory().newQuery().getClass(), Matchers.equalTo(SmartQuery.class));
+        TestDatabaseSetup setup = new TestDatabaseSetup();
+        MatcherAssert.assertThat(new SmartQueryFactory(setup.source()).newQuery().getClass(),
+            Matchers.equalTo(SmartQuery.class));
     }
 }
