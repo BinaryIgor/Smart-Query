@@ -105,4 +105,11 @@ public class SmartQueryTest {
     public void leavesConnectionOpen() throws Exception {
         closesConnection(false);
     }
+
+    @Test
+    public void usesDialectTranslation() throws Exception {
+        String suffix = "xxx";
+        SmartQuery query = new SmartQuery(setup.source().getConnection(), sql -> sql + suffix);
+        MatcherAssert.assertThat(query.template(), Matchers.endsWith(suffix));
+    }
 }

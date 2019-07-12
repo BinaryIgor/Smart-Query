@@ -11,17 +11,27 @@ public class SmartQuery implements Query {
     private final Connection connection;
     private final StringBuilder template;
     private final List<Object> values;
+    private final DialectTranslation translation;
     private final boolean close;
 
-    public SmartQuery(Connection connection, boolean close) {
+    public SmartQuery(Connection connection, DialectTranslation translation, boolean close) {
         this.connection = connection;
         this.template = new StringBuilder();
         this.values = new ArrayList<>();
+        this.translation = translation;
         this.close = close;
     }
 
+    public SmartQuery(Connection connection, boolean close) {
+        this(connection, DialectTranslation.DEFAULT, close);
+    }
+
+    public SmartQuery(Connection connection, DialectTranslation translation) {
+        this(connection, translation, true);
+    }
+
     public SmartQuery(Connection connection) {
-        this(connection, true);
+        this(connection, DialectTranslation.DEFAULT);
     }
 
     @Override
@@ -65,7 +75,7 @@ public class SmartQuery implements Query {
 
     private PreparedStatement prepared(boolean returnId) throws Exception {
         PreparedStatement ps;
-        String query = template.toString();
+        String query = template();
         if (returnId) {
             ps = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
         } else {
@@ -107,7 +117,7 @@ public class SmartQuery implements Query {
     }
 
     public String template() {
-        return template.toString();
+        return translation.translated(template.toString());
     }
 
     public List<Object> values() {
