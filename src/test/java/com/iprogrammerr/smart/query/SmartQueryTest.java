@@ -112,4 +112,26 @@ public class SmartQueryTest {
         SmartQuery query = new SmartQuery(setup.source().getConnection(), sql -> sql + suffix);
         MatcherAssert.assertThat(query.template(), Matchers.endsWith(suffix));
     }
+
+    @Test
+    public void executesTransaction() {
+        String name = "None";
+        String alias = "Genius";
+
+        query().sql("INSERT INTO author(name, alias) VALUES(?, ?)")
+            .set(name, alias)
+            .newSql("DELETE FROM author WHERE name = ?")
+            .set(name)
+            .newSql("INSERT INTO author(name, alias) VALUES(?, ?)")
+            .set(name, alias)
+            .executeTransaction();
+
+        int count = query().sql("SELECT COUNT(name) FROM author WHERE alias = ?").set(alias)
+            .fetch(r -> {
+                r.next();
+                return r.getInt(1);
+            });
+
+        MatcherAssert.assertThat(count, Matchers.equalTo(1));
+    }
 }

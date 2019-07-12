@@ -8,6 +8,7 @@ import java.util.List;
 
 public class SmartQuery implements Query {
 
+    private static final String TEMPLATES_SEPARATOR = ";";
     private final Connection connection;
     private final StringBuilder template;
     private final List<Object> values;
@@ -38,6 +39,15 @@ public class SmartQuery implements Query {
     public Query sql(String sql) {
         if (template.length() > 0) {
             template.append(" ");
+        }
+        template.append(sql);
+        return this;
+    }
+
+    @Override
+    public Query newSql(String sql) {
+        if (template.length() > 0) {
+            template.append(TEMPLATES_SEPARATOR);
         }
         template.append(sql);
         return this;
@@ -100,6 +110,60 @@ public class SmartQuery implements Query {
         } finally {
             closeConnection();
         }
+    }
+
+    @Override
+    public void executeTransaction() {
+        boolean autoCommit = true;
+        try {
+            autoCommit = connection.getAutoCommit();
+            connection.setAutoCommit(false);
+            executeStatements();
+            connection.commit();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            closeTransaction(autoCommit);
+        }
+    }
+
+    private void closeTransaction(boolean autoCommit) {
+        try {
+            connection.setAutoCommit(autoCommit);
+            connection.rollback();
+            closeConnection();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void executeStatements() throws Exception {
+        List<PreparedStatement> ts = transactionStatements();
+        try {
+            for (PreparedStatement s : ts) {
+                s.executeUpdate();
+            }
+        } finally {
+            for (PreparedStatement s : ts) {
+                s.close();
+            }
+        }
+    }
+
+    private List<PreparedStatement> transactionStatements() throws Exception {
+        List<PreparedStatement> transactions = new ArrayList<>();
+        String[] templates = template().split(TEMPLATES_SEPARATOR);
+        int valuesStart = 0;
+        for (String t : templates) {
+            long params = t.chars().filter(ch -> ch == '?').count();
+            PreparedStatement ps = connection.prepareStatement(t);
+            for (int i = 0; i < params; i++) {
+                ps.setObject(i + 1, values.get(valuesStart + i));
+            }
+            transactions.add(ps);
+            valuesStart += params;
+        }
+        return transactions;
     }
 
     @Override

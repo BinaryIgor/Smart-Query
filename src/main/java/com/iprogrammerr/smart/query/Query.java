@@ -4,6 +4,8 @@ public interface Query {
 
     Query sql(String sql);
 
+    Query newSql(String sql);
+
     Query set(Object value, Object... values);
 
     <T> T fetch(ResultMapping<T> mapping);
@@ -11,4 +13,6 @@ public interface Query {
     void execute();
 
     long executeReturningId();
+
+    void executeTransaction();
 }
