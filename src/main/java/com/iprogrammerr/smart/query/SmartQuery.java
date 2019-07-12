@@ -11,11 +11,17 @@ public class SmartQuery implements Query {
     private final Connection connection;
     private final StringBuilder template;
     private final List<Object> values;
+    private final boolean close;
 
-    public SmartQuery(Connection connection) {
+    public SmartQuery(Connection connection, boolean close) {
         this.connection = connection;
         this.template = new StringBuilder();
         this.values = new ArrayList<>();
+        this.close = close;
+    }
+
+    public SmartQuery(Connection connection) {
+        this(connection, true);
     }
 
     @Override
@@ -49,7 +55,9 @@ public class SmartQuery implements Query {
 
     private void closeConnection() {
         try {
-            connection.close();
+            if (close) {
+                connection.close();
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

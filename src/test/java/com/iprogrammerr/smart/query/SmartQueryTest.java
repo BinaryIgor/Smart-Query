@@ -5,6 +5,8 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.sql.Connection;
+
 public class SmartQueryTest {
 
     private TestDatabaseSetup setup;
@@ -86,5 +88,21 @@ public class SmartQueryTest {
         });
 
         MatcherAssert.assertThat(count, Matchers.equalTo(0));
+    }
+
+    @Test
+    public void closesConnection() throws Exception {
+        closesConnection(true);
+    }
+
+    private void closesConnection(boolean closes) throws Exception {
+        Connection connection = setup.source().getConnection();
+        new SmartQuery(connection, closes).sql("delete from author").execute();
+        MatcherAssert.assertThat(connection.isClosed(), Matchers.equalTo(closes));
+    }
+
+    @Test
+    public void leavesConnectionOpen() throws Exception {
+        closesConnection(false);
     }
 }
