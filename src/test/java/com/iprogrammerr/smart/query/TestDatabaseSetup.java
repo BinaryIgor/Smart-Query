@@ -46,4 +46,12 @@ public class TestDatabaseSetup {
         }
         return source;
     }
+
+    public SmartQuery query() {
+        try {
+            return new SmartQuery(source().getConnection());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

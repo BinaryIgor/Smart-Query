@@ -8,6 +8,8 @@ public interface Query {
 
     Query set(Object value, Object... values);
 
+    QueryDsl dsl();
+
     <T> T fetch(ResultMapping<T> mapping);
 
     void execute();

@@ -63,6 +63,11 @@ public class SmartQuery implements Query {
     }
 
     @Override
+    public QueryDsl dsl() {
+        return new SmartQueryDsl(this, template, values);
+    }
+
+    @Override
     public <T> T fetch(ResultMapping<T> mapping) {
         try (PreparedStatement ps = prepared()) {
             return mapping.map(ps.executeQuery());
