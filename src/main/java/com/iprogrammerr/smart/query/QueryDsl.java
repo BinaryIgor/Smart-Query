@@ -74,6 +74,8 @@ public interface QueryDsl {
 
     QueryDsl columns(String column, String... columns);
 
+    QueryDsl join(String table);
+
     QueryDsl innerJoin(String table);
 
     QueryDsl leftJoin(String table);
@@ -109,6 +111,8 @@ public interface QueryDsl {
     QueryDsl as(String alias);
 
     QueryDsl openBracket();
+
+    QueryDsl next(String custom);
 
     QueryDsl append(String custom);
 

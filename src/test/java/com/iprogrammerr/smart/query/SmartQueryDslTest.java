@@ -253,6 +253,16 @@ public class SmartQueryDslTest {
     }
 
     @Test
+    public void appendsNext() {
+        appends(dsl().column("a").next("b").next("c"), "a, b, c");
+    }
+
+    @Test
+    public void appendsJoin() {
+        appends(dsl().join("book"), "JOIN book");
+    }
+
+    @Test
     public void appendsInnerJoin() {
         appends(dsl().innerJoin("author"), "INNER JOIN author");
     }

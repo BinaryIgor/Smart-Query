@@ -283,6 +283,12 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl next(String custom) {
+        appendCommaAnd(custom);
+        return this;
+    }
+
+    @Override
     public QueryDsl columns(String column, String... columns) {
         template.append(BRACKET_START).append(column);
         for (String c : columns) {
@@ -298,13 +304,18 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
-    public QueryDsl innerJoin(String table) {
-        return join("INNER", table);
+    public QueryDsl join(String table) {
+        return join("", table);
     }
 
     private QueryDsl join(String type, String table) {
         template.append(SPACE).append(type).append(" JOIN ").append(table);
         return this;
+    }
+
+    @Override
+    public QueryDsl innerJoin(String table) {
+        return join("INNER", table);
     }
 
     @Override
