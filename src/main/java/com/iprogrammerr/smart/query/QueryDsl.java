@@ -16,6 +16,14 @@ public interface QueryDsl {
 
     QueryDsl notEqual();
 
+    QueryDsl less();
+
+    QueryDsl lessEqual();
+
+    QueryDsl greater();
+
+    QueryDsl greaterEqual();
+
     QueryDsl value(Object value);
 
     QueryDsl column(String column);

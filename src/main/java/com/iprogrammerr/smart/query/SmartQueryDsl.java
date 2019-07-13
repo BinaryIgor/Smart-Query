@@ -76,6 +76,30 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl less() {
+        builder.append(" <");
+        return this;
+    }
+
+    @Override
+    public QueryDsl lessEqual() {
+        builder.append(" <=");
+        return this;
+    }
+
+    @Override
+    public QueryDsl greater() {
+        builder.append(" >");
+        return this;
+    }
+
+    @Override
+    public QueryDsl greaterEqual() {
+        builder.append(" >=");
+        return this;
+    }
+
+    @Override
     public QueryDsl value(Object value) {
         builder.append(" ").append(VALUE_PLACEHOLDER);
         values.add(value);

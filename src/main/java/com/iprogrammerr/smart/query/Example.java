@@ -10,8 +10,8 @@ public class Example {
             .dsl()
             .selectAll().from("author")
             .where("name")
-            .equal()
-            .value("3")
+            .notEqual()
+            .column("alias")
             .build()
             .fetch(r -> {
                 r.next();

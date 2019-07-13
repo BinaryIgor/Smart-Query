@@ -48,12 +48,36 @@ public class SmartQueryDslTest {
 
     @Test
     public void appendsEqual() {
-        MatcherAssert.assertThat(toString(dsl().equal()), Matchers.endsWith("="));
+        appendsOperator(dsl().equal(), "=");
+    }
+
+    private void appendsOperator(QueryDsl dsl, String operator) {
+        MatcherAssert.assertThat(toString(dsl), Matchers.endsWith(operator));
     }
 
     @Test
     public void appendsNotEqual() {
-        MatcherAssert.assertThat(toString(dsl().notEqual()), Matchers.endsWith("!="));
+        appendsOperator(dsl().notEqual(), "!=");
+    }
+
+    @Test
+    public void appendsLess() {
+        appendsOperator(dsl().less(), "<");
+    }
+
+    @Test
+    public void appendsLessEqual() {
+        appendsOperator(dsl().lessEqual(), "<=");
+    }
+
+    @Test
+    public void appendsGreater() {
+        appendsOperator(dsl().greater(), ">");
+    }
+
+    @Test
+    public void appendsGreaterEqual() {
+        appendsOperator(dsl().greaterEqual(), ">=");
     }
 
     @Test
@@ -62,5 +86,10 @@ public class SmartQueryDslTest {
         SmartQuery query = (SmartQuery) dsl().value(value).build();
         MatcherAssert.assertThat(query.template(), Matchers.endsWith("?"));
         MatcherAssert.assertThat(query.values(), Matchers.contains(value));
+    }
+
+    @Test
+    public void appendsColumn() {
+        MatcherAssert.assertThat(toString(dsl().column("a")), Matchers.endsWith("a"));
     }
 }
