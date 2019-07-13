@@ -128,4 +128,31 @@ public class SmartQueryTest {
 
         MatcherAssert.assertThat(count, Matchers.equalTo(1));
     }
+
+    @Test
+    public void executesTransactionWithDsl() {
+        String name = "Lem";
+        String alias = "Genius";
+
+        setup.query().dsl()
+            .insertInto("author").columns("name", "alias").values(name, alias)
+            .query().end()
+            .dsl()
+            .delete("author").where("name").equal().value(name)
+            .query().end()
+            .dsl()
+            .insertInto("author").columns("name", "alias").values(name, alias)
+            .query()
+            .executeTransaction();
+
+        int count = setup.query().dsl()
+            .select().count("name").from("author").where("alias").equal().value(alias)
+            .query()
+            .fetch(r -> {
+                r.next();
+                return r.getInt(1);
+            });
+
+        MatcherAssert.assertThat(count, Matchers.equalTo(1));
+    }
 }

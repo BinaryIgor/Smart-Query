@@ -8,10 +8,15 @@ public class Example {
         Connection connection = null;
         SmartQuery query = new SmartQuery(connection);
         query.dsl()
-            .selectAll().from("day").as("d").innerJoin("meal as m").on("d.id", "m.day_id")
-            .innerJoin("meal_product as mp").on("m.id", "mp.meal_id")
-            .innerJoin("product as p").on("mp.product_id", "p.id")
-            .innerJoin("food as f").on("p.food_id", "f.id");
+            .insertInto("user").columns("name", "surname", "email")
+            .values("Alan", "Turing", "alan_turing@email.com")
+            .query().end()
+            .dsl()
+            .delete("user").where("name").notEqual().value("Alan")
+            .query().end()
+            .dsl()
+            .update("user").set("name", "Machine").where("name").equal().value("Alan")
+            .query();
         //Generated query template
         System.out.println(query.template());
         //TO bind values
