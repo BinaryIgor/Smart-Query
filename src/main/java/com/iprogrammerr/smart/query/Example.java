@@ -8,14 +8,13 @@ public class Example {
         Connection connection = null;
         SmartQuery query = new SmartQuery(connection);
         query.dsl()
-            .select().column("a").as("A").nextColumn("b").as("B")
-            .from("author").as("A")
-            .where("A").in()
-            .openBracket()
-            .value(1).nextValue(2).nextValue(3)
-            .closeBracket()
-            .query();
+            .selectAll().from("day").as("d").innerJoin("meal as m").on("d.id", "m.day_id")
+            .innerJoin("meal_product as mp").on("m.id", "mp.meal_id")
+            .innerJoin("product as p").on("mp.product_id", "p.id")
+            .innerJoin("food as f").on("p.food_id", "f.id");
+        //Generated query template
         System.out.println(query.template());
+        //TO bind values
         System.out.println(query.values());
     }
 }
