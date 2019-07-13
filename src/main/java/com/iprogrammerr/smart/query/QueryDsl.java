@@ -38,8 +38,6 @@ public interface QueryDsl {
 
     QueryDsl in();
 
-    QueryDsl like();
-
     QueryDsl like(String pattern);
 
     QueryDsl isNull();
@@ -103,6 +101,10 @@ public interface QueryDsl {
     QueryDsl avg(String column);
 
     QueryDsl sum(String column);
+
+    QueryDsl min(String column);
+
+    QueryDsl max(String column);
 
     QueryDsl groupBy(String... columns);
 

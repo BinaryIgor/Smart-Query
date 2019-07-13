@@ -159,15 +159,8 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
-    public QueryDsl like() {
-        template.append(" LIKE");
-        return this;
-    }
-
-    @Override
     public QueryDsl like(String pattern) {
-        like();
-        template.append(SPACE).append(escaped(pattern));
+        template.append(" LIKE ").append(escaped(pattern));
         return this;
     }
 
@@ -382,6 +375,18 @@ public class SmartQueryDsl implements QueryDsl {
     @Override
     public QueryDsl sum(String column) {
         template.append(" SUM");
+        return inBracket(column);
+    }
+
+    @Override
+    public QueryDsl min(String column) {
+        template.append(" MIN");
+        return inBracket(column);
+    }
+
+    @Override
+    public QueryDsl max(String column) {
+        template.append(" MAX");
         return inBracket(column);
     }
 

@@ -148,11 +148,6 @@ public class SmartQueryDslTest {
     }
 
     @Test
-    public void appendsLike() {
-        appends(dsl().like(), "LIKE");
-    }
-
-    @Test
     public void appendsIsNull() {
         appends(dsl().isNull(), "IS NULL");
     }
@@ -321,6 +316,16 @@ public class SmartQueryDslTest {
     @Test
     public void appendsSum() {
         appends(dsl().sum("*"), "SUM(*)");
+    }
+
+    @Test
+    public void appendsMin() {
+        appends(dsl().min("x"), "MIN(x)");
+    }
+
+    @Test
+    public void appendsMax() {
+        appends(dsl().max("y"), "MAX(y)");
     }
 
     @Test
