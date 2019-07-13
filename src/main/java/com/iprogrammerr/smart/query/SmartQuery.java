@@ -37,19 +37,30 @@ public class SmartQuery implements Query {
 
     @Override
     public Query sql(String sql) {
-        if (template.length() > 0) {
+        if (shouldAppendSpace()) {
             template.append(" ");
         }
         template.append(sql);
         return this;
     }
 
+    private boolean shouldAppendSpace() {
+        int length = template.length();
+        boolean append;
+        if (length > 0) {
+            char last = template.charAt(length - 1);
+            append = !Character.isSpaceChar(last) && last != TEMPLATES_SEPARATOR.charAt(0);
+        } else {
+            append = false;
+        }
+        return append;
+    }
+
     @Override
-    public Query newSql(String sql) {
+    public Query end() {
         if (template.length() > 0) {
             template.append(TEMPLATES_SEPARATOR);
         }
-        template.append(sql);
         return this;
     }
 

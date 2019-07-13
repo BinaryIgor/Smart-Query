@@ -4,7 +4,7 @@ public interface Query {
 
     Query sql(String sql);
 
-    Query newSql(String sql);
+    Query end();
 
     Query set(Object value, Object... values);
 

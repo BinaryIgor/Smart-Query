@@ -8,7 +8,12 @@ public class Example {
         Connection connection = null;
         SmartQuery query = new SmartQuery(connection);
         query.dsl()
-            .select().count("*").from("author")
+            .select("ProductName").from("Product")
+            .where("Id").in()
+            .openBracket()
+            .select("ProductId").from("OrderItem")
+            .where("Quantity").greater().value(100)
+            .closeBracket()
             .query();
         System.out.println(query.template());
         System.out.println(query.values());

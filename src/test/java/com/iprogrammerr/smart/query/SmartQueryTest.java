@@ -112,9 +112,11 @@ public class SmartQueryTest {
 
         setup.query().sql("INSERT INTO author(name, alias) VALUES(?, ?)")
             .set(name, alias)
-            .newSql("DELETE FROM author WHERE name = ?")
+            .end()
+            .sql("DELETE FROM author WHERE name = ?")
             .set(name)
-            .newSql("INSERT INTO author(name, alias) VALUES(?, ?)")
+            .end()
+            .sql("INSERT INTO author(name, alias) VALUES(?, ?)")
             .set(name, alias)
             .executeTransaction();
 

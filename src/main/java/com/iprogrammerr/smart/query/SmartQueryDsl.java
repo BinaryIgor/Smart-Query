@@ -175,9 +175,9 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
-    public QueryDsl exists(String subquery) {
+    public QueryDsl exists() {
         template.append(" EXISTS");
-        return inBracket(subquery);
+        return this;
     }
 
     @Override
@@ -271,12 +271,6 @@ public class SmartQueryDsl implements QueryDsl {
         return this;
     }
 
-    @Override
-    public QueryDsl subquery(String subquery) {
-        template.append(SPACE);
-        return inBracket(subquery);
-    }
-
     private QueryDsl inBracket(String value) {
         template.append(BRACKET_START).append(value).append(BRACKET_END);
         return this;
@@ -310,6 +304,18 @@ public class SmartQueryDsl implements QueryDsl {
     @Override
     public QueryDsl crossJoin(String table) {
         return join("CROSS", table);
+    }
+
+    @Override
+    public QueryDsl union() {
+        template.append(" UNION ");
+        return this;
+    }
+
+    @Override
+    public QueryDsl unionAll() {
+        template.append(" UNION ALL ");
+        return this;
     }
 
     @Override
@@ -351,6 +357,18 @@ public class SmartQueryDsl implements QueryDsl {
     @Override
     public QueryDsl having() {
         template.append(" HAVING");
+        return this;
+    }
+
+    @Override
+    public QueryDsl openBracket() {
+        template.append(BRACKET_START);
+        return this;
+    }
+
+    @Override
+    public QueryDsl closeBracket() {
+        template.append(BRACKET_END);
         return this;
     }
 

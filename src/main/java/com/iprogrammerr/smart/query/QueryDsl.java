@@ -42,7 +42,7 @@ public interface QueryDsl {
 
     QueryDsl isNotNull();
 
-    QueryDsl exists(String subquery);
+    QueryDsl exists();
 
     QueryDsl not();
 
@@ -68,8 +68,6 @@ public interface QueryDsl {
 
     QueryDsl columns(String column, String... columns);
 
-    QueryDsl subquery(String subquery);
-
     QueryDsl innerJoin(String table);
 
     QueryDsl leftJoin(String table);
@@ -79,6 +77,10 @@ public interface QueryDsl {
     QueryDsl fullJoin(String table);
 
     QueryDsl crossJoin(String table);
+
+    QueryDsl union();
+
+    QueryDsl unionAll();
 
     QueryDsl on(String firstColumn, String secondColumn);
 
@@ -93,6 +95,10 @@ public interface QueryDsl {
     QueryDsl groupBy(String... columns);
 
     QueryDsl having();
+
+    QueryDsl openBracket();
+
+    QueryDsl closeBracket();
 
     Query query();
 }

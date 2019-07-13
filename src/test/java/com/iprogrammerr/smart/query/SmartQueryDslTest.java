@@ -150,8 +150,7 @@ public class SmartQueryDslTest {
 
     @Test
     public void appendsExists() {
-        String subquery = "SELECT * FROM a WHERE b > 1";
-        appends(dsl().exists(subquery), "EXISTS(" + subquery + ")");
+        appends(dsl().exists(), "EXISTS");
     }
 
     @Test
@@ -223,12 +222,6 @@ public class SmartQueryDslTest {
     }
 
     @Test
-    public void appendsSubquery() {
-        String subquery = "SELECT * FROM a";
-        appends(dsl().subquery(subquery), "(" + subquery + ")");
-    }
-
-    @Test
     public void appendsColumn() {
         MatcherAssert.assertThat(toString(dsl().column("a")), Matchers.endsWith("a"));
     }
@@ -269,6 +262,16 @@ public class SmartQueryDslTest {
     }
 
     @Test
+    public void appendsUnion() {
+        appends(dsl().union(), "UNION ");
+    }
+
+    @Test
+    public void appendsUnionAll() {
+        appends(dsl().unionAll(), "UNION ALL ");
+    }
+
+    @Test
     public void appendsCount() {
         appends(dsl().count("i"), "COUNT(i)");
     }
@@ -301,5 +304,16 @@ public class SmartQueryDslTest {
     @Test
     public void appendsHaving() {
         appends(dsl().having().count("*"), "HAVING COUNT(*)");
+    }
+
+    @Test
+    public void buildsSubquery() {
+        int quantity = 100;
+        QueryDsl dsl = dsl().select("ProductName").from("Product").where("Id").in()
+            .openBracket()
+            .select("ProductId").from("OrderItem").where("Quantity").greater().value(quantity)
+            .closeBracket();
+        String template = "SELECT ProductName FROM Product WHERE Id IN(SELECT ProductId FROM OrderItem WHERE Quantity > ?)";
+        buildsProperQuery(dsl, template, quantity);
     }
 }
