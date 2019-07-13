@@ -86,7 +86,7 @@ public class SmartQueryDslTest {
     @Test
     public void buildsSelectInto() {
         String value = "Germany";
-        QueryDsl dsl = dsl().selectAll().into("CustomersGermany").from("Customers")
+        QueryDsl dsl = dsl().selectAll().append(" INTO CustomersGermany").from("Customers")
             .where("Country").equal().value(value);
         String template = "SELECT * INTO CustomersGermany FROM Customers WHERE Country = ?";
         buildsProperQuery(dsl, template, value);
@@ -219,6 +219,13 @@ public class SmartQueryDslTest {
     }
 
     @Test
+    public void appendsLimitWithOffset() {
+        int offset = 1;
+        int limit = 5;
+        buildsProperQuery(dsl().limit(offset, limit), " LIMIT ?, ?", offset, limit);
+    }
+
+    @Test
     public void appendsOffset() {
         int offset = 2;
         buildsProperQuery(dsl().offset(offset), " OFFSET ?", offset);
@@ -229,14 +236,6 @@ public class SmartQueryDslTest {
         String value = "None";
         QueryDsl dsl = dsl().value(value);
         buildsProperQuery(dsl, " ?", value);
-    }
-
-    @Test
-    public void appendsNextValues() {
-        String first = "first";
-        int second = 2;
-        QueryDsl dsl = dsl().value(first).nextValue(second);
-        buildsProperQuery(dsl, " ?, ?", first, second);
     }
 
     @Test
@@ -251,11 +250,6 @@ public class SmartQueryDslTest {
     @Test
     public void appendsColumn() {
         appends(dsl().column("a"), "a");
-    }
-
-    @Test
-    public void appendsNextColumns() {
-        appends(dsl().column("a").nextColumn("b").nextColumn("c"), "a, b, c");
     }
 
     @Test

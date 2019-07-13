@@ -18,8 +18,6 @@ public interface QueryDsl {
 
     QueryDsl delete(String table);
 
-    QueryDsl into(String table);
-
     QueryDsl where(String column);
 
     QueryDsl equal();
@@ -64,17 +62,15 @@ public interface QueryDsl {
 
     QueryDsl limit(int value);
 
+    QueryDsl limit(int offset, int limit);
+
     QueryDsl offset(int value);
 
     QueryDsl value(Object value);
 
-    QueryDsl nextValue(Object value);
-
     QueryDsl values(Object value, Object... values);
 
     QueryDsl column(String column);
-
-    QueryDsl nextColumn(String column);
 
     QueryDsl columns(String column, String... columns);
 

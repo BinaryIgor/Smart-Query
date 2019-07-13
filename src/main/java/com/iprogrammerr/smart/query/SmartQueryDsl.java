@@ -99,12 +99,6 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
-    public QueryDsl into(String table) {
-        template.append(" INTO ").append(table);
-        return this;
-    }
-
-    @Override
     public QueryDsl where(String column) {
         template.append(" WHERE ").append(column);
         return this;
@@ -246,6 +240,15 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl limit(int offset, int limit) {
+        template.append(" LIMIT ").append(VALUE_PLACEHOLDER).append(COMMA)
+            .append(SPACE).append(VALUE_PLACEHOLDER);
+        values.add(offset);
+        values.add(limit);
+        return this;
+    }
+
+    @Override
     public QueryDsl offset(int value) {
         return addValue(" OFFSET ", value);
     }
@@ -255,12 +258,6 @@ public class SmartQueryDsl implements QueryDsl {
         template.append(SPACE).append(VALUE_PLACEHOLDER);
         values.add(value);
         return this;
-    }
-
-    @Override
-    public QueryDsl nextValue(Object value) {
-        template.append(COMMA);
-        return value(value);
     }
 
     @Override
@@ -282,12 +279,6 @@ public class SmartQueryDsl implements QueryDsl {
     @Override
     public QueryDsl column(String column) {
         template.append(" ").append(column);
-        return this;
-    }
-
-    @Override
-    public QueryDsl nextColumn(String column) {
-        appendCommaAnd(column);
         return this;
     }
 
