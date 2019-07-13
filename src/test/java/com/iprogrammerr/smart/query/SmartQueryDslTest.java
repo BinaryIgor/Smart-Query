@@ -86,18 +86,8 @@ public class SmartQueryDslTest {
     }
 
     @Test
-    public void appendsNotBetween() {
-        appends(dsl().notBetween(), "NOT BETWEEN");
-    }
-
-    @Test
     public void appendsIn() {
         appends(dsl().in(), "IN");
-    }
-
-    @Test
-    public void appendsNotIn() {
-        appends(dsl().notIn(), "NOT IN");
     }
 
     @Test
@@ -107,9 +97,18 @@ public class SmartQueryDslTest {
     }
 
     @Test
-    public void appendsNotLikePattern() {
-        String pattern = "pa%";
-        appends(dsl().notLike(pattern), String.format("NOT LIKE '%s'", pattern));
+    public void appendsNot() {
+        appends(dsl().not(), "NOT");
+    }
+
+    @Test
+    public void appendsOr() {
+        appends(dsl().or(), "OR");
+    }
+
+    @Test
+    public void appendsAnd() {
+        appends(dsl().and(), "AND");
     }
 
     @Test

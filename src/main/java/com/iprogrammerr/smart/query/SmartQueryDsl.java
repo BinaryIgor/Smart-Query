@@ -10,12 +10,12 @@ public class SmartQueryDsl implements QueryDsl {
     private static final String BRACKET_START = "(";
     private static final String BRACKET_END = ")";
     private final Query query;
-    private final StringBuilder builder;
+    private final StringBuilder template;
     private final List<Object> values;
 
-    public SmartQueryDsl(Query query, StringBuilder builder, List<Object> values) {
+    public SmartQueryDsl(Query query, StringBuilder template, List<Object> values) {
         this.query = query;
-        this.builder = builder;
+        this.template = template;
         this.values = values;
     }
 
@@ -25,12 +25,12 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     private QueryDsl select(boolean distinct, String... columns) {
-        builder.append("SELECT");
+        template.append("SELECT");
         if (distinct) {
-            builder.append(" DISTINCT");
+            template.append(" DISTINCT");
         }
         if (columns.length > 0) {
-            builder.append(SPACE).append(columns[0]);
+            template.append(SPACE).append(columns[0]);
             for (int i = 1; i < columns.length; i++) {
                 appendCommaAnd(columns[i]);
             }
@@ -39,7 +39,7 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     private void appendCommaAnd(String value) {
-        builder.append(COMMA).append(SPACE).append(value);
+        template.append(COMMA).append(SPACE).append(value);
     }
 
     @Override
@@ -49,85 +49,73 @@ public class SmartQueryDsl implements QueryDsl {
 
     @Override
     public QueryDsl selectAll() {
-        builder.append("SELECT *");
+        template.append("SELECT *");
         return this;
     }
 
     @Override
     public QueryDsl from(String table) {
-        builder.append(" FROM ").append(table);
+        template.append(" FROM ").append(table);
         return this;
     }
 
     @Override
     public QueryDsl where(String column) {
-        builder.append(" WHERE ").append(column);
+        template.append(" WHERE ").append(column);
         return this;
     }
 
     @Override
     public QueryDsl equal() {
-        builder.append(" =");
+        template.append(" =");
         return this;
     }
 
     @Override
     public QueryDsl notEqual() {
-        builder.append(" !=");
+        template.append(" !=");
         return this;
     }
 
     @Override
     public QueryDsl less() {
-        builder.append(" <");
+        template.append(" <");
         return this;
     }
 
     @Override
     public QueryDsl lessEqual() {
-        builder.append(" <=");
+        template.append(" <=");
         return this;
     }
 
     @Override
     public QueryDsl greater() {
-        builder.append(" >");
+        template.append(" >");
         return this;
     }
 
     @Override
     public QueryDsl greaterEqual() {
-        builder.append(" >=");
+        template.append(" >=");
         return this;
     }
 
     @Override
     public QueryDsl between() {
-        builder.append(" BETWEEN");
-        return this;
-    }
-
-    @Override
-    public QueryDsl notBetween() {
-        builder.append(" NOT BETWEEN");
+        template.append(" BETWEEN");
         return this;
     }
 
     @Override
     public QueryDsl in() {
-        builder.append(" IN");
-        return this;
-    }
-
-    @Override
-    public QueryDsl notIn() {
-        builder.append(" NOT IN");
+        template.append(" IN");
         return this;
     }
 
     @Override
     public QueryDsl like(String pattern) {
-        builder.append(" LIKE ").append(escaped(pattern));
+        template.append(" LIKE ").append(escaped(pattern));
         return this;
     }
 
@@ -136,39 +124,51 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
-    public QueryDsl notLike(String pattern) {
-        builder.append(" NOT LIKE ").append(escaped(pattern));
+    public QueryDsl not() {
+        template.append(" NOT");
+        return this;
+    }
+
+    @Override
+    public QueryDsl and() {
+        template.append(" AND");
+        return this;
+    }
+
+    @Override
+    public QueryDsl or() {
+        template.append(" OR");
         return this;
     }
 
     @Override
     public QueryDsl value(Object value) {
-        builder.append(SPACE).append(VALUE_PLACEHOLDER);
+        template.append(SPACE).append(VALUE_PLACEHOLDER);
         values.add(value);
         return this;
     }
 
     @Override
     public QueryDsl values(Object value, Object... values) {
-        builder.append(SPACE).append(BRACKET_START).append(VALUE_PLACEHOLDER);
+        template.append(SPACE).append(BRACKET_START).append(VALUE_PLACEHOLDER);
         this.values.add(value);
         for (Object v : values) {
             appendCommaAnd(VALUE_PLACEHOLDER);
             this.values.add(v);
         }
-        builder.append(BRACKET_END);
+        template.append(BRACKET_END);
         return this;
     }
 
     @Override
     public QueryDsl column(String column) {
-        builder.append(" ").append(column);
+        template.append(" ").append(column);
         return this;
     }
 
     @Override
     public QueryDsl subquery(String subquery) {
-        builder.append(SPACE).append(BRACKET_START).append(subquery).append(BRACKET_END);
+        template.append(SPACE).append(BRACKET_START).append(subquery).append(BRACKET_END);
         return this;
     }
 
@@ -178,6 +178,6 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     public String template() {
-        return builder.toString();
+        return template.toString();
     }
 }

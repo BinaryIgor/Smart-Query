@@ -26,15 +26,15 @@ public interface QueryDsl {
 
     QueryDsl between();
 
-    QueryDsl notBetween();
-
     QueryDsl in();
-
-    QueryDsl notIn();
 
     QueryDsl like(String pattern);
 
-    QueryDsl notLike(String pattern);
+    QueryDsl not();
+
+    QueryDsl and();
+
+    QueryDsl or();
 
     QueryDsl value(Object value);
 

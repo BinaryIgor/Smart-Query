@@ -8,12 +8,12 @@ public class Example {
         Connection connection = null;
         SmartQuery query = new SmartQuery(connection);
         query.dsl()
-            .selectAll().from("author")
+            .select("name").from("author")
             .where("name")
-            .in()
-            .subquery("SELECT DISTINCT name FROM author a")
+            .not().like("S%")
+            .and()
+            .column("id").greater().value(1)
             .build();
         System.out.println(query.template());
-        System.out.println(query.values());
     }
 }
