@@ -9,6 +9,7 @@ import java.util.List;
 public class SmartQuery implements Query {
 
     private static final String TEMPLATES_SEPARATOR = ";";
+    private static final char VALUES_PLACEHOLDER = '?';
     private final Connection connection;
     private final StringBuilder template;
     private final List<Object> values;
@@ -49,7 +50,7 @@ public class SmartQuery implements Query {
         boolean append;
         if (length > 0) {
             char last = template.charAt(length - 1);
-            append = !Character.isSpaceChar(last) && last != TEMPLATES_SEPARATOR.charAt(0);
+            append = !(Character.isSpaceChar(last) || last == TEMPLATES_SEPARATOR.charAt(0));
         } else {
             append = false;
         }
@@ -81,7 +82,7 @@ public class SmartQuery implements Query {
     @Override
     public <T> T fetch(ResultMapping<T> mapping) {
         try (PreparedStatement ps = prepared()) {
-            return mapping.map(ps.executeQuery());
+            return mapping.value(ps.executeQuery());
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -108,9 +109,13 @@ public class SmartQuery implements Query {
             ps = connection.prepareStatement(query);
         }
         for (int i = 0; i < values.size(); i++) {
-            ps.setObject(i + 1, values.get(i));
+            setValue(ps, i, values.get(i));
         }
         return ps;
+    }
+
+    private void setValue(PreparedStatement prepared, int index, Object value) throws Exception {
+        prepared.setObject(index + 1, value);
     }
 
     private PreparedStatement prepared() throws Exception {
@@ -131,22 +136,26 @@ public class SmartQuery implements Query {
     @Override
     public void executeTransaction() {
         boolean autoCommit = true;
+        boolean rollback = true;
         try {
             autoCommit = connection.getAutoCommit();
             connection.setAutoCommit(false);
             executeStatements();
             connection.commit();
+            rollback = false;
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            closeTransaction(autoCommit);
+            closeTransaction(autoCommit, rollback);
         }
     }
 
-    private void closeTransaction(boolean autoCommit) {
+    private void closeTransaction(boolean autoCommit, boolean rollback) {
         try {
+            if (rollback) {
+                connection.rollback();
+            }
             connection.setAutoCommit(autoCommit);
-            connection.rollback();
             closeConnection();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -171,10 +180,10 @@ public class SmartQuery implements Query {
         String[] templates = template().split(TEMPLATES_SEPARATOR);
         int valuesStart = 0;
         for (String t : templates) {
-            long params = t.chars().filter(ch -> ch == '?').count();
+            long params = t.chars().filter(ch -> ch == VALUES_PLACEHOLDER).count();
             PreparedStatement ps = connection.prepareStatement(t);
             for (int i = 0; i < params; i++) {
-                ps.setObject(i + 1, values.get(valuesStart + i));
+                setValue(ps, i, values.get(valuesStart + i));
             }
             transactions.add(ps);
             valuesStart += params;

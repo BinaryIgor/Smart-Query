@@ -174,4 +174,27 @@ public class SmartQueryTest {
 
         MatcherAssert.assertThat(count, Matchers.equalTo(1));
     }
+
+    @Test
+    public void rollsBackTransaction() {
+        String name = "Friedrich Nietzsche";
+
+        try {
+            setup.query().dsl()
+                .insertInto("author").columns("name", "alias").values(name, "a")
+                .query().end()
+                .dsl()
+                .insertInto("author").columns("name", "alias").values(name, "b")
+                .query()
+                .executeTransaction();
+        } catch (Exception ignored) {
+
+        }
+
+        boolean empty = setup.query().dsl()
+            .select("id").from("author").query()
+            .fetch(r -> !r.next());
+
+        MatcherAssert.assertThat(empty, Matchers.equalTo(true));
+    }
 }
