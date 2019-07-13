@@ -82,10 +82,10 @@ public class SmartQueryDsl implements QueryDsl {
 
     @Override
     public QueryDsl set(String column, Object value) {
-        if (!update) {
-            template.append(COMMA).append(SPACE);
-        } else {
+        if (update) {
             update = false;
+        } else {
+            template.append(COMMA).append(SPACE);
         }
         template.append(column).append(" = ").append(VALUE_PLACEHOLDER);
         values.add(value);
@@ -154,12 +154,8 @@ public class SmartQueryDsl implements QueryDsl {
 
     @Override
     public QueryDsl like(String pattern) {
-        template.append(" LIKE ").append(escaped(pattern));
+        template.append(" LIKE ").append(String.format("'%s'", pattern));
         return this;
-    }
-
-    private String escaped(String value) {
-        return String.format("'%s'", value);
     }
 
     @Override
@@ -230,20 +226,16 @@ public class SmartQueryDsl implements QueryDsl {
 
     @Override
     public QueryDsl limit(int value) {
-        return addValue(" LIMIT ", value);
-    }
-
-    private QueryDsl addValue(String prefix, Object value) {
-        template.append(prefix).append(VALUE_PLACEHOLDER);
-        values.add(value);
-        return this;
+        return limit(0, value);
     }
 
     @Override
     public QueryDsl limit(int offset, int limit) {
-        template.append(" LIMIT ").append(VALUE_PLACEHOLDER).append(COMMA)
-            .append(SPACE).append(VALUE_PLACEHOLDER);
-        values.add(offset);
+        template.append(" LIMIT ").append(VALUE_PLACEHOLDER);
+        if (offset > 0) {
+            appendCommaAnd(VALUE_PLACEHOLDER);
+            values.add(offset);
+        }
         values.add(limit);
         return this;
     }
@@ -253,11 +245,15 @@ public class SmartQueryDsl implements QueryDsl {
         return addValue(" OFFSET ", value);
     }
 
-    @Override
-    public QueryDsl value(Object value) {
-        template.append(SPACE).append(VALUE_PLACEHOLDER);
+    private QueryDsl addValue(String prefix, Object value) {
+        template.append(prefix).append(VALUE_PLACEHOLDER);
         values.add(value);
         return this;
+    }
+
+    @Override
+    public QueryDsl value(Object value) {
+        return addValue(SPACE, value);
     }
 
     @Override
@@ -266,8 +262,7 @@ public class SmartQueryDsl implements QueryDsl {
             template.append(" VALUES");
             insert = false;
         }
-        template.append(BRACKET_START).append(VALUE_PLACEHOLDER);
-        this.values.add(value);
+        addValue(BRACKET_START, value);
         for (Object v : values) {
             appendCommaAnd(VALUE_PLACEHOLDER);
             this.values.add(v);
