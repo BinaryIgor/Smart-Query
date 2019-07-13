@@ -10,6 +10,8 @@ public interface QueryDsl {
 
     QueryDsl from(String table);
 
+    QueryDsl insertInto(String table);
+
     QueryDsl where(String column);
 
     QueryDsl equal();
@@ -41,6 +43,8 @@ public interface QueryDsl {
     QueryDsl values(Object value, Object... values);
 
     QueryDsl column(String column);
+
+    QueryDsl columns(String column, String... columns);
 
     QueryDsl subquery(String subquery);
 

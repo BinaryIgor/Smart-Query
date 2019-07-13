@@ -42,6 +42,25 @@ public class SmartQueryDslTest {
     }
 
     @Test
+    public void buildsInsert() {
+        String place = "Somewhere";
+        int rate = 5;
+        QueryDsl dsl = dsl().insertInto("library").columns("place", "rate")
+            .values(place, rate);
+        buildsProperQuery(dsl, "INSERT INTO library(place, rate) VALUES(?, ?)", place, rate);
+    }
+
+    private void buildsProperQuery(QueryDsl dsl, String template, Object... values) {
+        SmartQuery query = queryFromDsl(dsl);
+        MatcherAssert.assertThat(query.template(), Matchers.equalTo(template));
+        MatcherAssert.assertThat(query.values(), Matchers.contains(values));
+    }
+
+    private SmartQuery queryFromDsl(QueryDsl dsl) {
+        return (SmartQuery) dsl.build();
+    }
+
+    @Test
     public void appendsWhere() {
         MatcherAssert.assertThat(toString(dsl().where("name")), Matchers.endsWith("WHERE name"));
     }
@@ -115,10 +134,7 @@ public class SmartQueryDslTest {
     public void appendsValue() {
         String value = "None";
         QueryDsl dsl = dsl().value(value);
-        appends(dsl, "?");
-
-        SmartQuery query = (SmartQuery) dsl.build();
-        MatcherAssert.assertThat(query.values(), Matchers.contains(value));
+        buildsProperQuery(dsl, " ?", value);
     }
 
     @Test
@@ -127,10 +143,7 @@ public class SmartQueryDslTest {
         double second = 3.3;
         String third = "Third";
         QueryDsl dsl = dsl().values(first, second, third);
-        appends(dsl, "(?, ?, ?)");
-
-        SmartQuery query = (SmartQuery) dsl.build();
-        MatcherAssert.assertThat(query.values(), Matchers.contains(first, second, third));
+        buildsProperQuery(dsl, "(?, ?, ?)", first, second, third);
     }
 
     @Test

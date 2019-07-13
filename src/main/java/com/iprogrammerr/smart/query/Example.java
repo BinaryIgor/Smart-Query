@@ -8,11 +8,9 @@ public class Example {
         Connection connection = null;
         SmartQuery query = new SmartQuery(connection);
         query.dsl()
-            .select("name").from("author")
-            .where("name")
-            .not().like("S%")
-            .and()
-            .column("id").greater().value(1)
+            .insertInto("author")
+            .columns("name", "alias")
+            .values("Adam", "Stasiek")
             .build();
         System.out.println(query.template());
     }
