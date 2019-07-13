@@ -84,6 +84,15 @@ public class SmartQueryDslTest {
     }
 
     @Test
+    public void buildsSelectInto() {
+        String value = "Germany";
+        QueryDsl dsl = dsl().selectAll().into("CustomersGermany").from("Customers")
+            .where("Country").equal().value(value);
+        String template = "SELECT * INTO CustomersGermany FROM Customers WHERE Country = ?";
+        buildsProperQuery(dsl, template, value);
+    }
+
+    @Test
     public void appendsWhere() {
         MatcherAssert.assertThat(toString(dsl().where("name")), Matchers.endsWith("WHERE name"));
     }
@@ -154,6 +163,16 @@ public class SmartQueryDslTest {
     }
 
     @Test
+    public void appendsAny() {
+        appends(dsl().any(), "ANY");
+    }
+
+    @Test
+    public void appendsAll() {
+        appends(dsl().all(), "ALL");
+    }
+
+    @Test
     public void appendsNot() {
         appends(dsl().not(), "NOT");
     }
@@ -213,6 +232,14 @@ public class SmartQueryDslTest {
     }
 
     @Test
+    public void appendsNextValues() {
+        String first = "first";
+        int second = 2;
+        QueryDsl dsl = dsl().value(first).nextValue(second);
+        buildsProperQuery(dsl, " ?, ?", first, second);
+    }
+
+    @Test
     public void appendsValues() {
         int first = 1;
         double second = 3.3;
@@ -223,7 +250,12 @@ public class SmartQueryDslTest {
 
     @Test
     public void appendsColumn() {
-        MatcherAssert.assertThat(toString(dsl().column("a")), Matchers.endsWith("a"));
+        appends(dsl().column("a"), "a");
+    }
+
+    @Test
+    public void appendsNextColumns() {
+        appends(dsl().column("a").nextColumn("b").nextColumn("c"), "a, b, c");
     }
 
     @Test
@@ -304,6 +336,11 @@ public class SmartQueryDslTest {
     @Test
     public void appendsHaving() {
         appends(dsl().having().count("*"), "HAVING COUNT(*)");
+    }
+
+    @Test
+    public void appendsAlias() {
+        appends(dsl().as("crypto"), "AS crypto");
     }
 
     @Test

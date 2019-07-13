@@ -18,6 +18,8 @@ public interface QueryDsl {
 
     QueryDsl delete(String table);
 
+    QueryDsl into(String table);
+
     QueryDsl where(String column);
 
     QueryDsl equal();
@@ -44,6 +46,10 @@ public interface QueryDsl {
 
     QueryDsl exists();
 
+    QueryDsl any();
+
+    QueryDsl all();
+
     QueryDsl not();
 
     QueryDsl and();
@@ -62,9 +68,13 @@ public interface QueryDsl {
 
     QueryDsl value(Object value);
 
+    QueryDsl nextValue(Object value);
+
     QueryDsl values(Object value, Object... values);
 
     QueryDsl column(String column);
+
+    QueryDsl nextColumn(String column);
 
     QueryDsl columns(String column, String... columns);
 
@@ -95,6 +105,8 @@ public interface QueryDsl {
     QueryDsl groupBy(String... columns);
 
     QueryDsl having();
+
+    QueryDsl as(String alias);
 
     QueryDsl openBracket();
 

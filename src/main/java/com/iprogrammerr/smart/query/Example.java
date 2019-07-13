@@ -8,11 +8,11 @@ public class Example {
         Connection connection = null;
         SmartQuery query = new SmartQuery(connection);
         query.dsl()
-            .select("ProductName").from("Product")
-            .where("Id").in()
+            .select().column("a").as("A").nextColumn("b").as("B")
+            .from("author").as("A")
+            .where("A").in()
             .openBracket()
-            .select("ProductId").from("OrderItem")
-            .where("Quantity").greater().value(100)
+            .value(1).nextValue(2).nextValue(3)
             .closeBracket()
             .query();
         System.out.println(query.template());

@@ -99,6 +99,12 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl into(String table) {
+        template.append(" INTO ").append(table);
+        return this;
+    }
+
+    @Override
     public QueryDsl where(String column) {
         template.append(" WHERE ").append(column);
         return this;
@@ -181,6 +187,18 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl any() {
+        template.append(" ANY");
+        return this;
+    }
+
+    @Override
+    public QueryDsl all() {
+        template.append(" ALL");
+        return this;
+    }
+
+    @Override
     public QueryDsl not() {
         template.append(" NOT");
         return this;
@@ -240,6 +258,12 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl nextValue(Object value) {
+        template.append(COMMA);
+        return value(value);
+    }
+
+    @Override
     public QueryDsl values(Object value, Object... values) {
         if (insert) {
             template.append(" VALUES");
@@ -258,6 +282,12 @@ public class SmartQueryDsl implements QueryDsl {
     @Override
     public QueryDsl column(String column) {
         template.append(" ").append(column);
+        return this;
+    }
+
+    @Override
+    public QueryDsl nextColumn(String column) {
+        appendCommaAnd(column);
         return this;
     }
 
@@ -357,6 +387,12 @@ public class SmartQueryDsl implements QueryDsl {
     @Override
     public QueryDsl having() {
         template.append(" HAVING");
+        return this;
+    }
+
+    @Override
+    public QueryDsl as(String alias) {
+        template.append(" AS ").append(alias);
         return this;
     }
 
