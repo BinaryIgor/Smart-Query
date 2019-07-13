@@ -7,6 +7,8 @@ public class SmartQueryDsl implements QueryDsl {
     private static final String VALUE_PLACEHOLDER = "?";
     private static final String COMMA = ",";
     private static final String SPACE = " ";
+    private static final String BRACKET_START = "(";
+    private static final String BRACKET_END = ")";
     private final Query query;
     private final StringBuilder builder;
     private final List<Object> values;
@@ -141,14 +143,32 @@ public class SmartQueryDsl implements QueryDsl {
 
     @Override
     public QueryDsl value(Object value) {
-        builder.append(" ").append(VALUE_PLACEHOLDER);
+        builder.append(SPACE).append(VALUE_PLACEHOLDER);
         values.add(value);
+        return this;
+    }
+
+    @Override
+    public QueryDsl values(Object value, Object... values) {
+        builder.append(SPACE).append(BRACKET_START).append(VALUE_PLACEHOLDER);
+        this.values.add(value);
+        for (Object v : values) {
+            appendCommaAnd(VALUE_PLACEHOLDER);
+            this.values.add(v);
+        }
+        builder.append(BRACKET_END);
         return this;
     }
 
     @Override
     public QueryDsl column(String column) {
         builder.append(" ").append(column);
+        return this;
+    }
+
+    @Override
+    public QueryDsl subquery(String subquery) {
+        builder.append(SPACE).append(BRACKET_START).append(subquery).append(BRACKET_END);
         return this;
     }
 

@@ -52,7 +52,7 @@ public class SmartQueryDslTest {
     }
 
     private void appends(QueryDsl dsl, String value) {
-        MatcherAssert.assertThat(toString(dsl), Matchers.endsWith(value));
+        MatcherAssert.assertThat(toString(dsl), Matchers.endsWith(" " + value));
     }
 
     @Test
@@ -115,9 +115,29 @@ public class SmartQueryDslTest {
     @Test
     public void appendsValue() {
         String value = "None";
-        SmartQuery query = (SmartQuery) dsl().value(value).build();
-        MatcherAssert.assertThat(query.template(), Matchers.endsWith("?"));
+        QueryDsl dsl = dsl().value(value);
+        appends(dsl, "?");
+
+        SmartQuery query = (SmartQuery) dsl.build();
         MatcherAssert.assertThat(query.values(), Matchers.contains(value));
+    }
+
+    @Test
+    public void appendsValues() {
+        int first = 1;
+        double second = 3.3;
+        String third = "Third";
+        QueryDsl dsl = dsl().values(first, second, third);
+        appends(dsl, "(?, ?, ?)");
+
+        SmartQuery query = (SmartQuery) dsl.build();
+        MatcherAssert.assertThat(query.values(), Matchers.contains(first, second, third));
+    }
+
+    @Test
+    public void appendsSubquery() {
+        String subquery = "SELECT * FROM a";
+        appends(dsl().subquery(subquery), "(" + subquery + ")");
     }
 
     @Test

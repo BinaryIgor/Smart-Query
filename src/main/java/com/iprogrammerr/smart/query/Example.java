@@ -6,16 +6,14 @@ public class Example {
 
     public static void main(String... args) {
         Connection connection = null;
-        new SmartQuery(connection)
-            .dsl()
+        SmartQuery query = new SmartQuery(connection);
+        query.dsl()
             .selectAll().from("author")
             .where("name")
-            .notEqual()
-            .column("alias")
-            .build()
-            .fetch(r -> {
-                r.next();
-                return r.getString(1);
-            });
+            .in()
+            .subquery("SELECT DISTINCT name FROM author a")
+            .build();
+        System.out.println(query.template());
+        System.out.println(query.values());
     }
 }

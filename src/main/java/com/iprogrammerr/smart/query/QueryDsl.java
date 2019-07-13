@@ -20,6 +20,10 @@ public interface QueryDsl {
 
     QueryDsl lessEqual();
 
+    QueryDsl greater();
+
+    QueryDsl greaterEqual();
+
     QueryDsl between();
 
     QueryDsl notBetween();
@@ -32,13 +36,13 @@ public interface QueryDsl {
 
     QueryDsl notLike(String pattern);
 
-    QueryDsl greater();
-
-    QueryDsl greaterEqual();
-
     QueryDsl value(Object value);
 
+    QueryDsl values(Object value, Object... values);
+
     QueryDsl column(String column);
+
+    QueryDsl subquery(String subquery);
 
     Query build();
 }
