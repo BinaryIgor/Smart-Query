@@ -16,7 +16,7 @@ public class SmartQueryDslTest {
     }
 
     @Test
-    public void selects() {
+    public void buildsSelect() {
         String query = toString(dsl().select("a", "b").from("author"));
         MatcherAssert.assertThat(query, Matchers.equalTo("SELECT a, b FROM author"));
     }
@@ -30,14 +30,37 @@ public class SmartQueryDslTest {
     }
 
     @Test
-    public void selectsAll() {
+    public void buildsSelectAll() {
         String query = toString(dsl().selectAll().from("book"));
         MatcherAssert.assertThat(query, Matchers.equalTo("SELECT * FROM book"));
     }
 
     @Test
-    public void selectsDistinct() {
+    public void buildsSelectDistinct() {
         String query = toString(dsl().selectDistinct("name").from("pet"));
         MatcherAssert.assertThat(query, Matchers.equalTo("SELECT DISTINCT name FROM pet"));
+    }
+
+    @Test
+    public void appendsWhere() {
+        MatcherAssert.assertThat(toString(dsl().where("name")), Matchers.endsWith("WHERE name"));
+    }
+
+    @Test
+    public void appendsEqual() {
+        MatcherAssert.assertThat(toString(dsl().equal()), Matchers.endsWith("="));
+    }
+
+    @Test
+    public void appendsNotEqual() {
+        MatcherAssert.assertThat(toString(dsl().notEqual()), Matchers.endsWith("!="));
+    }
+
+    @Test
+    public void appendsValue() {
+        String value = "None";
+        SmartQuery query = (SmartQuery) dsl().value(value).build();
+        MatcherAssert.assertThat(query.template(), Matchers.endsWith("?"));
+        MatcherAssert.assertThat(query.values(), Matchers.contains(value));
     }
 }

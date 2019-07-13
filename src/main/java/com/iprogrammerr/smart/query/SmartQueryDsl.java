@@ -4,6 +4,7 @@ import java.util.List;
 
 public class SmartQueryDsl implements QueryDsl {
 
+    private static final String VALUE_PLACEHOLDER = "?";
     private static final String COMMA = ",";
     private static final String SPACE = " ";
     private final Query query;
@@ -53,6 +54,37 @@ public class SmartQueryDsl implements QueryDsl {
     @Override
     public QueryDsl from(String table) {
         builder.append(" FROM ").append(table);
+        return this;
+    }
+
+    @Override
+    public QueryDsl where(String column) {
+        builder.append(" WHERE ").append(column);
+        return this;
+    }
+
+    @Override
+    public QueryDsl equal() {
+        builder.append(" =");
+        return this;
+    }
+
+    @Override
+    public QueryDsl notEqual() {
+        builder.append(" !=");
+        return this;
+    }
+
+    @Override
+    public QueryDsl value(Object value) {
+        builder.append(" ").append(VALUE_PLACEHOLDER);
+        values.add(value);
+        return this;
+    }
+
+    @Override
+    public QueryDsl column(String column) {
+        builder.append(" ").append(column);
         return this;
     }
 

@@ -9,6 +9,9 @@ public class Example {
         new SmartQuery(connection)
             .dsl()
             .selectAll().from("author")
+            .where("name")
+            .equal()
+            .value("3")
             .build()
             .fetch(r -> {
                 r.next();
