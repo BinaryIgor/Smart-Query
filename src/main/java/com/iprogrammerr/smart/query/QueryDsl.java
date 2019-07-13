@@ -84,5 +84,15 @@ public interface QueryDsl {
 
     QueryDsl on(String column);
 
-    Query build();
+    QueryDsl count(String column);
+
+    QueryDsl avg(String column);
+
+    QueryDsl sum(String column);
+
+    QueryDsl groupBy(String... columns);
+
+    QueryDsl having();
+
+    Query query();
 }

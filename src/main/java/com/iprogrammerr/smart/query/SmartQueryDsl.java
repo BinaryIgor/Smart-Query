@@ -32,6 +32,10 @@ public class SmartQueryDsl implements QueryDsl {
         if (distinct) {
             template.append(" DISTINCT");
         }
+        return appendColumns(columns);
+    }
+
+    private QueryDsl appendColumns(String... columns) {
         if (columns.length > 0) {
             template.append(SPACE).append(columns[0]);
             for (int i = 1; i < columns.length; i++) {
@@ -172,7 +176,8 @@ public class SmartQueryDsl implements QueryDsl {
 
     @Override
     public QueryDsl exists(String subquery) {
-        return subquery(" EXISTS", subquery);
+        template.append(" EXISTS");
+        return inBracket(subquery);
     }
 
     @Override
@@ -196,13 +201,7 @@ public class SmartQueryDsl implements QueryDsl {
     @Override
     public QueryDsl orderBy(String... columns) {
         template.append(" ORDER BY");
-        if (columns.length > 0) {
-            template.append(SPACE).append(columns[0]);
-            for (int i = 1; i < columns.length; i++) {
-                appendCommaAnd(columns[i]);
-            }
-        }
-        return this;
+        return appendColumns(columns);
     }
 
     @Override
@@ -274,11 +273,12 @@ public class SmartQueryDsl implements QueryDsl {
 
     @Override
     public QueryDsl subquery(String subquery) {
-        return subquery(SPACE, subquery);
+        template.append(SPACE);
+        return inBracket(subquery);
     }
 
-    private QueryDsl subquery(String prefix, String subquery) {
-        template.append(prefix).append(BRACKET_START).append(subquery).append(BRACKET_END);
+    private QueryDsl inBracket(String value) {
+        template.append(BRACKET_START).append(value).append(BRACKET_END);
         return this;
     }
 
@@ -325,7 +325,37 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
-    public Query build() {
+    public QueryDsl count(String column) {
+        template.append(" COUNT");
+        return inBracket(column);
+    }
+
+    @Override
+    public QueryDsl avg(String column) {
+        template.append(" AVG");
+        return inBracket(column);
+    }
+
+    @Override
+    public QueryDsl sum(String column) {
+        template.append(" SUM");
+        return inBracket(column);
+    }
+
+    @Override
+    public QueryDsl groupBy(String... columns) {
+        template.append(" GROUP BY");
+        return appendColumns(columns);
+    }
+
+    @Override
+    public QueryDsl having() {
+        template.append(" HAVING");
+        return this;
+    }
+
+    @Override
+    public Query query() {
         return query;
     }
 

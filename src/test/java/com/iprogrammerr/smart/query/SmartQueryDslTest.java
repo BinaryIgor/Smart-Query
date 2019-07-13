@@ -57,7 +57,7 @@ public class SmartQueryDslTest {
     }
 
     private SmartQuery queryFromDsl(QueryDsl dsl) {
-        return (SmartQuery) dsl.build();
+        return (SmartQuery) dsl.query();
     }
 
     @Test
@@ -266,5 +266,40 @@ public class SmartQueryDslTest {
     @Test
     public void appendsOn() {
         appends(dsl().on("a"), "ON a");
+    }
+
+    @Test
+    public void appendsCount() {
+        appends(dsl().count("i"), "COUNT(i)");
+    }
+
+    @Test
+    public void appendsAvg() {
+        appends(dsl().avg("a"), "AVG(a)");
+    }
+
+    @Test
+    public void appendsSum() {
+        appends(dsl().sum("*"), "SUM(*)");
+    }
+
+    @Test
+    public void appendsEmptyGroupBy() {
+        appends(dsl().groupBy(), "GROUP BY");
+    }
+
+    @Test
+    public void appendsGroupBy() {
+        appends(dsl().groupBy("g"), "GROUP BY g");
+    }
+
+    @Test
+    public void appendsGroupByMultipleColumns() {
+        appends(dsl().groupBy("a", "b", "c"), "GROUP BY a, b, c");
+    }
+
+    @Test
+    public void appendsHaving() {
+        appends(dsl().having().count("*"), "HAVING COUNT(*)");
     }
 }
