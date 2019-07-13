@@ -415,6 +415,12 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl append(String custom) {
+        template.append(custom);
+        return this;
+    }
+
+    @Override
     public QueryDsl closeBracket() {
         template.append(BRACKET_END);
         return this;

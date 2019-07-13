@@ -363,4 +363,11 @@ public class SmartQueryDslTest {
         String template = "SELECT ProductName FROM Product WHERE Id IN(SELECT ProductId FROM OrderItem WHERE Quantity > ?)";
         buildsProperQuery(dsl, template, quantity);
     }
+
+    @Test
+    public void buildsQueryWithAppended() {
+        String custom = "SELECT CURRENT_TIMESTAMP";
+        QueryDsl dsl = dsl().selectAll().from("a").unionAll().append(custom);
+        MatcherAssert.assertThat(toString(dsl), Matchers.equalTo("SELECT * FROM a UNION ALL " + custom));
+    }
 }

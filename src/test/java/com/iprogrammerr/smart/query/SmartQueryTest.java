@@ -60,7 +60,7 @@ public class SmartQueryTest {
             .insertInto("author").columns("name", "alias").values(name, alias)
             .query().execute();
         String fetchedAlias = setup.query()
-            .dsl().select("alias").from("author").where("LOWER(name)").equal().value(name.toLowerCase())
+            .dsl().select("alias").from("author").where("LOWER(name)").like("nik%")
             .query()
             .fetch(r -> {
                 r.next();
