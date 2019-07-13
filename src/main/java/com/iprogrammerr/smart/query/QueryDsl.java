@@ -70,5 +70,19 @@ public interface QueryDsl {
 
     QueryDsl subquery(String subquery);
 
+    QueryDsl innerJoin(String table);
+
+    QueryDsl leftJoin(String table);
+
+    QueryDsl rightJoin(String table);
+
+    QueryDsl fullJoin(String table);
+
+    QueryDsl crossJoin(String table);
+
+    QueryDsl on(String firstColumn, String secondColumn);
+
+    QueryDsl on(String column);
+
     Query build();
 }

@@ -232,4 +232,39 @@ public class SmartQueryDslTest {
     public void appendsColumn() {
         MatcherAssert.assertThat(toString(dsl().column("a")), Matchers.endsWith("a"));
     }
+
+    @Test
+    public void appendsInnerJoin() {
+        appends(dsl().innerJoin("author"), "INNER JOIN author");
+    }
+
+    @Test
+    public void appendsLeftJoin() {
+        appends(dsl().leftJoin("b"), "LEFT JOIN b");
+    }
+
+    @Test
+    public void appendsRightJoin() {
+        appends(dsl().rightJoin("c"), "RIGHT JOIN c");
+    }
+
+    @Test
+    public void appendsFullJoin() {
+        appends(dsl().fullJoin("d"), "FULL JOIN d");
+    }
+
+    @Test
+    public void appendsCrossJoin() {
+        appends(dsl().crossJoin("e"), "CROSS JOIN e");
+    }
+
+    @Test
+    public void appendsDefaultOn() {
+        appends(dsl().on("a", "b"), "ON a = b");
+    }
+
+    @Test
+    public void appendsOn() {
+        appends(dsl().on("a"), "ON a");
+    }
 }

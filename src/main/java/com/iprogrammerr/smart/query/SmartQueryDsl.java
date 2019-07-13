@@ -283,6 +283,48 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl innerJoin(String table) {
+        return join("INNER", table);
+    }
+
+    private QueryDsl join(String type, String table) {
+        template.append(SPACE).append(type).append(" JOIN ").append(table);
+        return this;
+    }
+
+    @Override
+    public QueryDsl leftJoin(String table) {
+        return join("LEFT", table);
+    }
+
+    @Override
+    public QueryDsl rightJoin(String table) {
+        return join("RIGHT", table);
+    }
+
+    @Override
+    public QueryDsl fullJoin(String table) {
+        return join("FULL", table);
+    }
+
+    @Override
+    public QueryDsl crossJoin(String table) {
+        return join("CROSS", table);
+    }
+
+    @Override
+    public QueryDsl on(String firstColumn, String secondColumn) {
+        template.append(" ON ").append(firstColumn).append(" = ").append(secondColumn);
+        return this;
+    }
+
+    @Override
+    public QueryDsl on(String column) {
+        template.append(" ON ").append(column);
+        return this;
+    }
+
+    @Override
     public Query build() {
         return query;
     }
