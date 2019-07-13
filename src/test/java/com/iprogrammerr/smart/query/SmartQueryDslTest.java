@@ -148,6 +148,11 @@ public class SmartQueryDslTest {
     }
 
     @Test
+    public void appendsLike() {
+        appends(dsl().like(), "LIKE");
+    }
+
+    @Test
     public void appendsIsNull() {
         appends(dsl().isNull(), "IS NULL");
     }
@@ -179,12 +184,12 @@ public class SmartQueryDslTest {
 
     @Test
     public void appendsOr() {
-        appends(dsl().or(), "OR");
+        appends(dsl().or("b"), "OR b");
     }
 
     @Test
     public void appendsAnd() {
-        appends(dsl().and(), "AND");
+        appends(dsl().and("a"), "AND a");
     }
 
     @Test

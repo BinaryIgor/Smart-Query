@@ -38,6 +38,8 @@ public interface QueryDsl {
 
     QueryDsl in();
 
+    QueryDsl like();
+
     QueryDsl like(String pattern);
 
     QueryDsl isNull();
@@ -52,9 +54,9 @@ public interface QueryDsl {
 
     QueryDsl not();
 
-    QueryDsl and();
+    QueryDsl and(String column);
 
-    QueryDsl or();
+    QueryDsl or(String column);
 
     QueryDsl orderBy(String... columns);
 

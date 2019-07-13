@@ -159,8 +159,15 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl like() {
+        template.append(" LIKE");
+        return this;
+    }
+
+    @Override
     public QueryDsl like(String pattern) {
-        template.append(" LIKE ").append(escaped(pattern));
+        like();
+        template.append(SPACE).append(escaped(pattern));
         return this;
     }
 
@@ -205,14 +212,14 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
-    public QueryDsl and() {
-        template.append(" AND");
+    public QueryDsl and(String column) {
+        template.append(" AND ").append(column);
         return this;
     }
 
     @Override
-    public QueryDsl or() {
-        template.append(" OR");
+    public QueryDsl or(String column) {
+        template.append(" OR ").append(column);
         return this;
     }
 

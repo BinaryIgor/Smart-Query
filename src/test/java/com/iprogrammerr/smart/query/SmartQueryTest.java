@@ -52,6 +52,25 @@ public class SmartQueryTest {
     }
 
     @Test
+    public void insertsAndSearches() {
+        String name = "Nikola";
+        String alias = "Tesla";
+
+        setup.query().dsl()
+            .insertInto("author").columns("name", "alias").values(name, alias)
+            .query().execute();
+        String fetchedAlias = setup.query()
+            .dsl().select("alias").from("author").where("LOWER(name)").equal().value(name.toLowerCase())
+            .query()
+            .fetch(r -> {
+                r.next();
+                return r.getString(1);
+            });
+
+        MatcherAssert.assertThat(fetchedAlias, Matchers.equalTo(alias));
+    }
+
+    @Test
     public void updates() {
         long id = setup.query().sql("INSERT INTO author(name, alias) values(?, ?)").set("Ignacy", "Anonim")
             .executeReturningId();
