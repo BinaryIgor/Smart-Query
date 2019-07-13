@@ -12,6 +12,10 @@ public interface QueryDsl {
 
     QueryDsl insertInto(String table);
 
+    QueryDsl update(String table);
+
+    QueryDsl set(String column, Object value);
+
     QueryDsl where(String column);
 
     QueryDsl equal();

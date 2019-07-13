@@ -61,6 +61,23 @@ public class SmartQueryDslTest {
     }
 
     @Test
+    public void buildsSingleFieldUpdate() {
+        int rate = 2;
+        QueryDsl dsl = dsl().update("city").set("rate", rate).where("id").equal().value(1);
+        buildsProperQuery(dsl, "UPDATE city SET rate = ? WHERE id = ?", rate, 1);
+    }
+
+    @Test
+    public void buildsUpdate() {
+        int pages = 500;
+        String author = "Anonymous Genius";
+        String name = "Masterpiece";
+        QueryDsl dsl = dsl().update("book").set("pages", pages).set("author", author)
+            .where("name").equal().value(name);
+        buildsProperQuery(dsl, "UPDATE book SET pages = ?, author = ? WHERE name = ?", pages, author, name);
+    }
+
+    @Test
     public void appendsWhere() {
         MatcherAssert.assertThat(toString(dsl().where("name")), Matchers.endsWith("WHERE name"));
     }

@@ -8,10 +8,10 @@ public class Example {
         Connection connection = null;
         SmartQuery query = new SmartQuery(connection);
         query.dsl()
-            .insertInto("author")
-            .columns("name", "alias")
-            .values("Adam", "Stasiek")
+            .update("author").set("name", "Stasiek")
+            .where("id").equal().value(1)
             .build();
         System.out.println(query.template());
+        System.out.println(query.values());
     }
 }

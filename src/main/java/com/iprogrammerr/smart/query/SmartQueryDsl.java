@@ -13,11 +13,13 @@ public class SmartQueryDsl implements QueryDsl {
     private final StringBuilder template;
     private final List<Object> values;
     private boolean insert;
+    private boolean update;
 
     public SmartQueryDsl(Query query, StringBuilder template, List<Object> values) {
         this.query = query;
         this.template = template;
         this.values = values;
+        this.insert = this.update = false;
     }
 
     @Override
@@ -64,6 +66,25 @@ public class SmartQueryDsl implements QueryDsl {
     public QueryDsl insertInto(String table) {
         template.append("INSERT INTO ").append(table);
         insert = true;
+        return this;
+    }
+
+    @Override
+    public QueryDsl update(String table) {
+        template.append("UPDATE ").append(table).append(" SET ");
+        update = true;
+        return this;
+    }
+
+    @Override
+    public QueryDsl set(String column, Object value) {
+        if (!update) {
+            template.append(COMMA).append(SPACE);
+        } else {
+            update = false;
+        }
+        template.append(column).append(" = ").append(VALUE_PLACEHOLDER);
+        values.add(value);
         return this;
     }
 
