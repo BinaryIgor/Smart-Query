@@ -159,6 +159,23 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl isNull() {
+        template.append(" IS NULL");
+        return this;
+    }
+
+    @Override
+    public QueryDsl isNotNull() {
+        template.append(" IS NOT NULL");
+        return this;
+    }
+
+    @Override
+    public QueryDsl exists(String subquery) {
+        return subquery(" EXISTS", subquery);
+    }
+
+    @Override
     public QueryDsl not() {
         template.append(" NOT");
         return this;
@@ -257,7 +274,11 @@ public class SmartQueryDsl implements QueryDsl {
 
     @Override
     public QueryDsl subquery(String subquery) {
-        template.append(SPACE).append(BRACKET_START).append(subquery).append(BRACKET_END);
+        return subquery(SPACE, subquery);
+    }
+
+    private QueryDsl subquery(String prefix, String subquery) {
+        template.append(prefix).append(BRACKET_START).append(subquery).append(BRACKET_END);
         return this;
     }
 

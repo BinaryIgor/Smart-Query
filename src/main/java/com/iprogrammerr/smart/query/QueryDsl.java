@@ -38,6 +38,12 @@ public interface QueryDsl {
 
     QueryDsl like(String pattern);
 
+    QueryDsl isNull();
+
+    QueryDsl isNotNull();
+
+    QueryDsl exists(String subquery);
+
     QueryDsl not();
 
     QueryDsl and();

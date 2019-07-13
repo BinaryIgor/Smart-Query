@@ -139,6 +139,22 @@ public class SmartQueryDslTest {
     }
 
     @Test
+    public void appendsIsNull() {
+        appends(dsl().isNull(), "IS NULL");
+    }
+
+    @Test
+    public void appendsIsNotNull() {
+        appends(dsl().isNotNull(), "IS NOT NULL");
+    }
+
+    @Test
+    public void appendsExists() {
+        String subquery = "SELECT * FROM a WHERE b > 1";
+        appends(dsl().exists(subquery), "EXISTS(" + subquery + ")");
+    }
+
+    @Test
     public void appendsNot() {
         appends(dsl().not(), "NOT");
     }
