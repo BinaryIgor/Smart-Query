@@ -22,7 +22,7 @@ new SmartQuery(connection)
     .set(600, "Some", id)
     .execute();
 new SmartQuery(connection)
-    .sql("DELETE from book WHERE = ?")
+    .sql("DELETE FROM book WHERE = ?")
     .set(id)
     .execute();
 ```
@@ -36,9 +36,9 @@ Author author = new SmartQuery(connection).dsl()
         return new Author(r.getLong("id"), r.getString("name"), r.getString("alias"));
     });
 long id = new SmartQuery(connection).dsl()
-        .insertInto("book").columns("pages", "author").values(500, "None")
-        .query()
-        .executeReturningId();
+    .insertInto("book").columns("pages", "author").values(500, "None")
+    .query()
+    .executeReturningId();
 new SmartQuery(connection).dsl()
     .update("book").set("pages", 600).set("author", "Some").where("id").equal().value(id)
     .query()
@@ -75,7 +75,7 @@ new SmartQuery(connection)
     .executeTransaction();
 ```
 ## Transparency
-There is much more. You can create anything that is possible with plain SQL. Results of your experiments can be easily seen.
+There is much more. You can create anything that is possible with a plain SQL. Results of your experiments can be easily seen.
 ```java
 SmartQuery query = new SmartQuery(connection);
 query.dsl()
@@ -97,7 +97,8 @@ public class SmartQueryFactory implements QueryFactory {
     private final DialectTranslation translation;
     private final boolean closeConnections;
 
-    public SmartQueryFactory(Callable<Connection> source, DialectTranslation translation, boolean closeConnections) {
+    public SmartQueryFactory(Callable<Connection> source, DialectTranslation translation, 
+        boolean closeConnections) {
         this.source = source;
         this.translation = translation;
         this.closeConnections = closeConnections;
