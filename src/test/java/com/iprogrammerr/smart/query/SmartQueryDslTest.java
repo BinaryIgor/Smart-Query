@@ -78,6 +78,12 @@ public class SmartQueryDslTest {
     }
 
     @Test
+    public void buildsDelete() {
+        QueryDsl dsl = dsl().delete("a").where("name").notEqual().value("b");
+        buildsProperQuery(dsl, "DELETE FROM a WHERE name != ?", "b");
+    }
+
+    @Test
     public void appendsWhere() {
         MatcherAssert.assertThat(toString(dsl().where("name")), Matchers.endsWith("WHERE name"));
     }
@@ -145,6 +151,43 @@ public class SmartQueryDslTest {
     @Test
     public void appendsAnd() {
         appends(dsl().and(), "AND");
+    }
+
+    @Test
+    public void appendsEmptyOrderBy() {
+        appends(dsl().orderBy(), "ORDER BY");
+    }
+
+    @Test
+    public void appendsOrderBy() {
+        appends(dsl().orderBy("a"), "ORDER BY a");
+    }
+
+    @Test
+    public void appendsOrderByMultipleColumns() {
+        appends(dsl().orderBy("a ASC", "b DESC"), "ORDER BY a ASC, b DESC");
+    }
+
+    @Test
+    public void appendsAsc() {
+        appends(dsl().asc(), "ASC");
+    }
+
+    @Test
+    public void appendsDesc() {
+        appends(dsl().desc(), "DESC");
+    }
+
+    @Test
+    public void appendsLimit() {
+        int limit = 3;
+        buildsProperQuery(dsl().limit(limit), " LIMIT ?", limit);
+    }
+
+    @Test
+    public void appendsOffset() {
+        int offset = 2;
+        buildsProperQuery(dsl().offset(offset), " OFFSET ?", offset);
     }
 
     @Test

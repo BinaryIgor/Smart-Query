@@ -89,6 +89,12 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl delete(String table) {
+        template.append("DELETE FROM ").append(table);
+        return this;
+    }
+
+    @Override
     public QueryDsl where(String column) {
         template.append(" WHERE ").append(column);
         return this;
@@ -168,6 +174,46 @@ public class SmartQueryDsl implements QueryDsl {
     public QueryDsl or() {
         template.append(" OR");
         return this;
+    }
+
+    @Override
+    public QueryDsl orderBy(String... columns) {
+        template.append(" ORDER BY");
+        if (columns.length > 0) {
+            template.append(SPACE).append(columns[0]);
+            for (int i = 1; i < columns.length; i++) {
+                appendCommaAnd(columns[i]);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public QueryDsl asc() {
+        template.append(" ASC");
+        return this;
+    }
+
+    @Override
+    public QueryDsl desc() {
+        template.append(" DESC");
+        return this;
+    }
+
+    @Override
+    public QueryDsl limit(int value) {
+        return addValue(" LIMIT ", value);
+    }
+
+    private QueryDsl addValue(String prefix, Object value) {
+        template.append(prefix).append(VALUE_PLACEHOLDER);
+        values.add(value);
+        return this;
+    }
+
+    @Override
+    public QueryDsl offset(int value) {
+        return addValue(" OFFSET ", value);
     }
 
     @Override

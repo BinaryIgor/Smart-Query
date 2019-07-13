@@ -8,8 +8,8 @@ public class Example {
         Connection connection = null;
         SmartQuery query = new SmartQuery(connection);
         query.dsl()
-            .update("author").set("name", "Stasiek")
-            .where("id").equal().value(1)
+            .selectAll().from("author").orderBy("name ASC, alias DESC")
+            .limit(3).offset(1)
             .build();
         System.out.println(query.template());
         System.out.println(query.values());
