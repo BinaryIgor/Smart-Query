@@ -20,6 +20,18 @@ public interface QueryDsl {
 
     QueryDsl lessEqual();
 
+    QueryDsl between();
+
+    QueryDsl notBetween();
+
+    QueryDsl in();
+
+    QueryDsl notIn();
+
+    QueryDsl like(String pattern);
+
+    QueryDsl notLike(String pattern);
+
     QueryDsl greater();
 
     QueryDsl greaterEqual();

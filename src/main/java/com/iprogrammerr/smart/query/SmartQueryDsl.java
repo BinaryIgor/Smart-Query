@@ -100,6 +100,46 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl between() {
+        builder.append(" BETWEEN");
+        return this;
+    }
+
+    @Override
+    public QueryDsl notBetween() {
+        builder.append(" NOT BETWEEN");
+        return this;
+    }
+
+    @Override
+    public QueryDsl in() {
+        builder.append(" IN");
+        return this;
+    }
+
+    @Override
+    public QueryDsl notIn() {
+        builder.append(" NOT IN");
+        return this;
+    }
+
+    @Override
+    public QueryDsl like(String pattern) {
+        builder.append(" LIKE ").append(escaped(pattern));
+        return this;
+    }
+
+    private String escaped(String value) {
+        return String.format("'%s'", value);
+    }
+
+    @Override
+    public QueryDsl notLike(String pattern) {
+        builder.append(" NOT LIKE ").append(escaped(pattern));
+        return this;
+    }
+
+    @Override
     public QueryDsl value(Object value) {
         builder.append(" ").append(VALUE_PLACEHOLDER);
         values.add(value);

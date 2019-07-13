@@ -48,36 +48,68 @@ public class SmartQueryDslTest {
 
     @Test
     public void appendsEqual() {
-        appendsOperator(dsl().equal(), "=");
+        appends(dsl().equal(), "=");
     }
 
-    private void appendsOperator(QueryDsl dsl, String operator) {
-        MatcherAssert.assertThat(toString(dsl), Matchers.endsWith(operator));
+    private void appends(QueryDsl dsl, String value) {
+        MatcherAssert.assertThat(toString(dsl), Matchers.endsWith(value));
     }
 
     @Test
     public void appendsNotEqual() {
-        appendsOperator(dsl().notEqual(), "!=");
+        appends(dsl().notEqual(), "!=");
     }
 
     @Test
     public void appendsLess() {
-        appendsOperator(dsl().less(), "<");
+        appends(dsl().less(), "<");
     }
 
     @Test
     public void appendsLessEqual() {
-        appendsOperator(dsl().lessEqual(), "<=");
+        appends(dsl().lessEqual(), "<=");
     }
 
     @Test
     public void appendsGreater() {
-        appendsOperator(dsl().greater(), ">");
+        appends(dsl().greater(), ">");
     }
 
     @Test
     public void appendsGreaterEqual() {
-        appendsOperator(dsl().greaterEqual(), ">=");
+        appends(dsl().greaterEqual(), ">=");
+    }
+
+    @Test
+    public void appendsBetween() {
+        appends(dsl().between(), "BETWEEN");
+    }
+
+    @Test
+    public void appendsNotBetween() {
+        appends(dsl().notBetween(), "NOT BETWEEN");
+    }
+
+    @Test
+    public void appendsIn() {
+        appends(dsl().in(), "IN");
+    }
+
+    @Test
+    public void appendsNotIn() {
+        appends(dsl().notIn(), "NOT IN");
+    }
+
+    @Test
+    public void appendsLikePattern() {
+        String pattern = "%p__";
+        appends(dsl().like(pattern), String.format("LIKE '%s'", pattern));
+    }
+
+    @Test
+    public void appendsNotLikePattern() {
+        String pattern = "pa%";
+        appends(dsl().notLike(pattern), String.format("NOT LIKE '%s'", pattern));
     }
 
     @Test
