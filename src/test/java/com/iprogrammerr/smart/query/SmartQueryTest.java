@@ -38,15 +38,20 @@ public class SmartQueryTest {
 
     @Test
     public void insertsAndFetches() {
-        String name = "Adam";
-        String alias = "Stasiek";
+        String name = "Adam Bernard Mickiewicz";
+        String alias = "Three Bards";
 
-        long id = setup.query().sql("INSERT INTO author(name, alias) values(?, ?)").set(name, alias)
+        long id = setup.query()
+            .sql("INSERT INTO author(name, alias) values(?, ?)")
+            .set(name, alias)
             .executeReturningId();
-        Author author = setup.query().sql("SELECT * FROM author WHERE id = ?").set(id).fetch(r -> {
-            r.next();
-            return new Author(r);
-        });
+        Author author = setup.query()
+            .sql("SELECT * FROM author WHERE id = ?")
+            .set(id)
+            .fetch(r -> {
+                r.next();
+                return new Author(r);
+            });
 
         MatcherAssert.assertThat(author, Matchers.equalTo(new Author(id, name, alias)));
     }
@@ -59,8 +64,8 @@ public class SmartQueryTest {
         setup.query().dsl()
             .insertInto("author").columns("name", "alias").values(name, alias)
             .query().execute();
-        String fetchedAlias = setup.query()
-            .dsl().select("alias").from("author").where("LOWER(name)").like("nik%")
+        String fetchedAlias = setup.query().dsl()
+            .select("alias").from("author").where("LOWER(name)").like("nik%")
             .query()
             .fetch(r -> {
                 r.next();
@@ -72,31 +77,46 @@ public class SmartQueryTest {
 
     @Test
     public void updates() {
-        long id = setup.query().sql("INSERT INTO author(name, alias) values(?, ?)").set("Ignacy", "Anonim")
+        long id = setup.query()
+            .sql("INSERT INTO author(name, alias) values(?, ?)")
+            .set("Ignacy", "Anonim")
             .executeReturningId();
 
-        String name = "Leonardo";
-        String alias = "Da Vinci";
-        setup.query().sql("update author set name = ?, alias = ?").set(name, alias).execute();
+        String name = "Leonardo da Vinci";
+        String alias = "Genius";
+        setup.query()
+            .sql("update author set name = ?, alias = ?")
+            .set(name, alias)
+            .execute();
 
-        Author author = setup.query().sql("SELECT * FROM author").fetch(r -> {
-            r.next();
-            return new Author(r);
-        });
+        Author author = setup.query()
+            .sql("SELECT * FROM author")
+            .fetch(r -> {
+                r.next();
+                return new Author(r);
+            });
 
         MatcherAssert.assertThat(author, Matchers.equalTo(new Author(id, name, alias)));
     }
 
     @Test
     public void deletes() {
-        long id = setup.query().sql("INSERT INTO author(name, alias) values(?, ?)").set("abc", "def")
+        long id = setup.query()
+            .sql("INSERT INTO author(name, alias) values(?, ?)")
+            .set("abc", "def")
             .executeReturningId();
-        setup.query().sql("DELETE FROM author WHERE id = ?").set(id).execute();
 
-        int count = setup.query().sql("SELECT COUNT(id) FROM author").fetch(r -> {
-            r.next();
-            return r.getInt(1);
-        });
+        setup.query()
+            .sql("DELETE FROM author WHERE id = ?")
+            .set(id)
+            .execute();
+
+        int count = setup.query()
+            .sql("SELECT COUNT(id) FROM author")
+            .fetch(r -> {
+                r.next();
+                return r.getInt(1);
+            });
 
         MatcherAssert.assertThat(count, Matchers.equalTo(0));
     }
@@ -108,7 +128,9 @@ public class SmartQueryTest {
 
     private void closesConnection(boolean closes) throws Exception {
         Connection connection = setup.source().getConnection();
-        new SmartQuery(connection, closes).sql("delete from author").execute();
+        new SmartQuery(connection, closes)
+            .sql("delete from author")
+            .execute();
         MatcherAssert.assertThat(connection.isClosed(), Matchers.equalTo(closes));
     }
 
@@ -139,7 +161,8 @@ public class SmartQueryTest {
             .set(name, alias)
             .executeTransaction();
 
-        int count = setup.query().sql("SELECT COUNT(name) FROM author WHERE alias = ?").set(alias)
+        int count = setup.query().sql("SELECT COUNT(name) FROM author WHERE alias = ?")
+            .set(alias)
             .fetch(r -> {
                 r.next();
                 return r.getInt(1);
@@ -149,7 +172,7 @@ public class SmartQueryTest {
     }
 
     @Test
-    public void executesTransactionWithDsl() {
+    public void executesTransactionUsingDsl() {
         String name = "Lem";
         String alias = "Genius";
 
@@ -192,7 +215,8 @@ public class SmartQueryTest {
         }
 
         boolean empty = setup.query().dsl()
-            .select("id").from("author").query()
+            .select("id").from("author")
+            .query()
             .fetch(r -> !r.next());
 
         MatcherAssert.assertThat(empty, Matchers.equalTo(true));

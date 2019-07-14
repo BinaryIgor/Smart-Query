@@ -19,7 +19,7 @@ public class Example {
             .query();
         //Generated query template
         System.out.println(query.template());
-        //TO bind values
+        //To bind values
         System.out.println(query.values());
     }
 }

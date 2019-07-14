@@ -435,8 +435,8 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
-    public QueryDsl append(String custom) {
-        template.append(custom);
+    public QueryDsl append(String sql) {
+        template.append(sql);
         return this;
     }
 

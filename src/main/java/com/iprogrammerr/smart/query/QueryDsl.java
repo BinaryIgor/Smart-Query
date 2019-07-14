@@ -118,7 +118,7 @@ public interface QueryDsl {
 
     QueryDsl openBracket();
 
-    QueryDsl append(String custom);
+    QueryDsl append(String sql);
 
     QueryDsl closeBracket();
 

@@ -45,7 +45,9 @@ public class SmartQueryDslTest {
     public void buildsInsert() {
         String place = "Somewhere";
         int rate = 5;
-        QueryDsl dsl = dsl().insertInto("library").columns("place", "rate")
+        QueryDsl dsl = dsl()
+            .insertInto("library")
+            .columns("place", "rate")
             .values(place, rate);
         buildsProperQuery(dsl, "INSERT INTO library(place, rate) VALUES(?, ?)", place, rate);
     }
@@ -72,7 +74,9 @@ public class SmartQueryDslTest {
         int pages = 500;
         String author = "Anonymous Genius";
         String name = "Masterpiece";
-        QueryDsl dsl = dsl().update("book").set("pages", pages).set("author", author)
+        QueryDsl dsl = dsl()
+            .update("book")
+            .set("pages", pages).set("author", author)
             .where("name").equal().value(name);
         buildsProperQuery(dsl, "UPDATE book SET pages = ?, author = ? WHERE name = ?", pages, author, name);
     }
@@ -86,7 +90,8 @@ public class SmartQueryDslTest {
     @Test
     public void buildsSelectInto() {
         String value = "Germany";
-        QueryDsl dsl = dsl().selectAll().append(" INTO CustomersGermany").from("Customers")
+        QueryDsl dsl = dsl()
+            .selectAll().append(" INTO CustomersGermany").from("Customers")
             .where("Country").equal().value(value);
         String template = "SELECT * INTO CustomersGermany FROM Customers WHERE Country = ?";
         buildsProperQuery(dsl, template, value);
@@ -94,7 +99,7 @@ public class SmartQueryDslTest {
 
     @Test
     public void appendsWhere() {
-        MatcherAssert.assertThat(toString(dsl().where("name")), Matchers.endsWith("WHERE name"));
+        appends(dsl().where("name"), "WHERE name");
     }
 
     @Test
@@ -370,7 +375,8 @@ public class SmartQueryDslTest {
     @Test
     public void buildsSubquery() {
         int quantity = 100;
-        QueryDsl dsl = dsl().select("ProductName").from("Product").where("Id").in()
+        QueryDsl dsl = dsl()
+            .select("ProductName").from("Product").where("Id").in()
             .openBracket()
             .select("ProductId").from("OrderItem").where("Quantity").greater().value(quantity)
             .closeBracket();
@@ -389,8 +395,9 @@ public class SmartQueryDslTest {
     public void buildsQueryWithFunction() {
         String firstArg = "Igor";
         int secondArg = 3;
-        QueryDsl dsl = dsl().select("name").from("author").where("name").equal()
-            .function("RIGHT", "Igor", 3);
+        QueryDsl dsl = dsl()
+            .select("name").from("author")
+            .where("name").equal().function("RIGHT", "Igor", 3);
         buildsProperQuery(dsl, "SELECT name FROM author WHERE name = RIGHT(?, ?)", firstArg, secondArg);
     }
 }
