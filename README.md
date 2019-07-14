@@ -135,3 +135,17 @@ public class SmartQueryFactory implements QueryFactory {
 }
 ```
 DialectTranslation is a functional interface that is always called before creating PreparedStatement from a String. If you need to do custom query translations you can put this logic here. Most of the time it isn't needed, so there is a default implementation which does nothing.
+## Maven
+```xml
+<dependency>
+  <groupId>com.iprogrammerr</groupId>
+  <artifactId>smart-query</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+## Gradle
+```
+compile 'com.iprogrammerr:smart-query:1.0.0'
+```
+## Contribution
+I will highly appreciate bug reports and feature requests. Feel free to open a [new issue](https://github.com/Iprogrammerr/Smart-Query/issues/) or fork the repo and send me a [pull request](https://github.com/Iprogrammerr/Smart-Query/pulls).
