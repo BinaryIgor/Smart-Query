@@ -195,14 +195,28 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl and() {
+        template.append(" AND");
+        return this;
+    }
+
+    @Override
     public QueryDsl and(String column) {
-        template.append(" AND ").append(column);
+        and();
+        template.append(SPACE).append(column);
+        return this;
+    }
+
+    @Override
+    public QueryDsl or() {
+        template.append(" OR");
         return this;
     }
 
     @Override
     public QueryDsl or(String column) {
-        template.append(" OR ").append(column);
+        or();
+        template.append(SPACE).append(column);
         return this;
     }
 
@@ -273,13 +287,7 @@ public class SmartQueryDsl implements QueryDsl {
 
     @Override
     public QueryDsl column(String column) {
-        template.append(" ").append(column);
-        return this;
-    }
-
-    @Override
-    public QueryDsl next(String custom) {
-        appendCommaAnd(custom);
+        template.append(SPACE).append(column);
         return this;
     }
 
@@ -385,6 +393,21 @@ public class SmartQueryDsl implements QueryDsl {
     public QueryDsl max(String column) {
         template.append(" MAX");
         return inBracket(column);
+    }
+
+    @Override
+    public QueryDsl function(String name, Object... arguments) {
+        template.append(SPACE).append(name).append(BRACKET_START);
+        if (arguments.length > 0) {
+            template.append(VALUE_PLACEHOLDER);
+            values.add(arguments[0]);
+            for (int i = 1; i < arguments.length; i++) {
+                appendCommaAnd(VALUE_PLACEHOLDER);
+                values.add(arguments[i]);
+            }
+        }
+        template.append(BRACKET_END);
+        return this;
     }
 
     @Override

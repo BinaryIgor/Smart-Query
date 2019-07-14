@@ -179,11 +179,21 @@ public class SmartQueryDslTest {
 
     @Test
     public void appendsOr() {
+        appends(dsl().or(), "OR");
+    }
+
+    @Test
+    public void appendsOrWitColumn() {
         appends(dsl().or("b"), "OR b");
     }
 
     @Test
     public void appendsAnd() {
+        appends(dsl().and(), "AND");
+    }
+
+    @Test
+    public void appendsAndWithColumn() {
         appends(dsl().and("a"), "AND a");
     }
 
@@ -250,11 +260,6 @@ public class SmartQueryDslTest {
     @Test
     public void appendsColumn() {
         appends(dsl().column("a"), "a");
-    }
-
-    @Test
-    public void appendsNext() {
-        appends(dsl().column("a").next("b").next("c"), "a, b, c");
     }
 
     @Test
@@ -333,6 +338,11 @@ public class SmartQueryDslTest {
     }
 
     @Test
+    public void appendsNoArgsFunction() {
+        appends(dsl().function("RAND"), "RAND()");
+    }
+
+    @Test
     public void appendsEmptyGroupBy() {
         appends(dsl().groupBy(), "GROUP BY");
     }
@@ -373,5 +383,14 @@ public class SmartQueryDslTest {
         String custom = "SELECT CURRENT_TIMESTAMP";
         QueryDsl dsl = dsl().selectAll().from("a").unionAll().append(custom);
         MatcherAssert.assertThat(toString(dsl), Matchers.equalTo("SELECT * FROM a UNION ALL " + custom));
+    }
+
+    @Test
+    public void buildsQueryWithFunction() {
+        String firstArg = "Igor";
+        int secondArg = 3;
+        QueryDsl dsl = dsl().select("name").from("author").where("name").equal()
+            .function("RIGHT", "Igor", 3);
+        buildsProperQuery(dsl, "SELECT name FROM author WHERE name = RIGHT(?, ?)", firstArg, secondArg);
     }
 }

@@ -50,7 +50,11 @@ public interface QueryDsl {
 
     QueryDsl not();
 
+    QueryDsl and();
+
     QueryDsl and(String column);
+
+    QueryDsl or();
 
     QueryDsl or(String column);
 
@@ -104,6 +108,8 @@ public interface QueryDsl {
 
     QueryDsl max(String column);
 
+    QueryDsl function(String name, Object... arguments);
+
     QueryDsl groupBy(String... columns);
 
     QueryDsl having();
@@ -111,8 +117,6 @@ public interface QueryDsl {
     QueryDsl as(String alias);
 
     QueryDsl openBracket();
-
-    QueryDsl next(String custom);
 
     QueryDsl append(String custom);
 
