@@ -429,6 +429,19 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl as(String prefix, String column, String... columns) {
+        template.append(SPACE).append(aliasedColumn(prefix, column));
+        for (String c : columns) {
+            appendCommaAnd(aliasedColumn(prefix, c));
+        }
+        return this;
+    }
+
+    private String aliasedColumn(String prefix, String column) {
+        return String.format("%s AS %s%s", column, prefix, column);
+    }
+
+    @Override
     public QueryDsl openBracket() {
         template.append(BRACKET_START);
         return this;

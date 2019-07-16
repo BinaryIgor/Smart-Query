@@ -116,6 +116,8 @@ public interface QueryDsl {
 
     QueryDsl as(String alias);
 
+    QueryDsl as(String prefix, String column, String... columns);
+
     QueryDsl openBracket();
 
     QueryDsl append(String sql);

@@ -42,6 +42,14 @@ public class SmartQueryDslTest {
     }
 
     @Test
+    public void buildsAliasedSelect() {
+        String query = toString(dsl().select().as("a", "id", "name", "surname")
+            .from("author").as("a"));
+        MatcherAssert.assertThat(query, Matchers.equalTo(
+            "SELECT id AS aid, name AS aname, surname AS asurname FROM author AS a"));
+    }
+
+    @Test
     public void buildsInsert() {
         String place = "Somewhere";
         int rate = 5;
