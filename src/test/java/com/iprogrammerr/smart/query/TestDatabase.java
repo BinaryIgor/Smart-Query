@@ -32,6 +32,7 @@ public class TestDatabase {
                  TestDatabase.class.getResourceAsStream("/schema.sql")))) {
             RunScript.execute(c, r);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException();
         }
     }

@@ -27,6 +27,8 @@ public abstract class ActiveRecord<Id, Table> {
         this.columns = columns;
     }
 
+    public abstract Table fetch();
+
     protected void set(String column, Object value) {
         if (shouldSetId(column, value)) {
             id.set(idClazz.cast(value));
@@ -44,8 +46,6 @@ public abstract class ActiveRecord<Id, Table> {
         return !autoIncrementId && column.equals(id.name()) && (value == null
             || value.getClass().isAssignableFrom(idClazz));
     }
-
-    public abstract Table fetch();
 
     public Id getId() {
         Id value = id.value();
@@ -65,7 +65,7 @@ public abstract class ActiveRecord<Id, Table> {
                 this.id.set(idClazz.cast((short) id));
             }
         } catch (Exception e) {
-            throw new RuntimeException("Id isn't of Number type", e);
+            throw new RuntimeException("Autoincrement id must be either long, int or short", e);
         }
     }
 
@@ -77,15 +77,21 @@ public abstract class ActiveRecord<Id, Table> {
 
     public void insert() {
         List<UpdateableColumn> changed = changed();
-        if (!changed.isEmpty()) {
+        if (shouldInsertWithAutoIncrement(changed)) {
             Query query = insertQuery(changed);
-            if (autoIncrementId) {
-                long id = query.executeReturningId();
-                setId(id);
-            } else {
-                query.execute();
-            }
+            long id = query.executeReturningId();
+            setId(id);
+        } else if (shouldInsertWithNaturalId(changed)) {
+            insertQuery(changed).execute();
         }
+    }
+
+    private boolean shouldInsertWithAutoIncrement(List<UpdateableColumn> changed) {
+        return autoIncrementId && !changed.isEmpty();
+    }
+
+    private boolean shouldInsertWithNaturalId(List<UpdateableColumn> changed) {
+        return !autoIncrementId && (!changed.isEmpty() || id.isUpdated());
     }
 
     private Query insertQuery(List<UpdateableColumn> changed) {
@@ -103,6 +109,9 @@ public abstract class ActiveRecord<Id, Table> {
 
     private List<UpdateableColumn> changed() {
         List<UpdateableColumn> changed = new ArrayList<>();
+        if (!autoIncrementId && id.isUpdated()) {
+            changed.add(id);
+        }
         for (UpdateableColumn c : columns) {
             if (c.isUpdated()) {
                 changed.add(c);

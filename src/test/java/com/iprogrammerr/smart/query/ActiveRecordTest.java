@@ -2,6 +2,7 @@ package com.iprogrammerr.smart.query;
 
 import com.iprogrammerr.smart.query.example.Author;
 import com.iprogrammerr.smart.query.example.AuthorRecord;
+import com.iprogrammerr.smart.query.example.OrganismRecord;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -31,7 +32,7 @@ public class ActiveRecordTest {
     }
 
     @Test
-    public void insertsAndFetches() {
+    public void insertsAndFetchesWithAutoIncrement() {
         String name = "Adam";
         String alias = "Wieszcz";
 
@@ -46,6 +47,18 @@ public class ActiveRecordTest {
             .setName(name).setAlias(alias);
         record.insert();
         return record;
+    }
+
+    @Test
+    public void insertsAndFetchesWithNaturalId() {
+        String dna = "AT-CGCGCGAT-ATCG-AT";
+
+        OrganismRecord record = new OrganismRecord(factory);
+        record.setDna(dna);
+        record.insert();
+
+        MatcherAssert.assertThat(record.fetch().dna, Matchers.equalTo(dna));
+        MatcherAssert.assertThat(record.getId(), Matchers.equalTo(dna));
     }
 
     @Test

@@ -6,3 +6,9 @@ CREATE TABLE author (
 	alias VARCHAR(50) NOT NULL UNIQUE,
 	PRIMARY KEY (id)
 );
+
+DROP TABLE IF EXISTS organism;
+CREATE TABLE organism (
+	dna VARCHAR(255) NOT NULL,
+	PRIMARY KEY (dna)
+);
