@@ -4,6 +4,11 @@ import java.sql.ResultSet;
 
 class Author {
 
+    public static final String TABLE = "author";
+    public static final String ID = "id";
+    public static final String NAME = "name";
+    public static final String ALIAS = "alias";
+
     public final long id;
     public final String name;
     public final String alias;
@@ -15,7 +20,7 @@ class Author {
     }
 
     public Author(ResultSet result) throws Exception {
-        this(result.getLong("id"), result.getString("name"), result.getString("alias"));
+        this(result.getLong(ID), result.getString(NAME), result.getString(ALIAS));
     }
 
     @Override
