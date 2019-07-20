@@ -7,8 +7,7 @@ import com.iprogrammerr.smart.query.active.UpdateableColumn;
 public class OrganismRecord extends ActiveRecord<String, Organism> {
 
     public OrganismRecord(QueryFactory factory, String dna) {
-        super(factory, Organism.TABLE, false, String.class,
-            new UpdateableColumn<>(Organism.DNA, dna));
+        super(factory, Organism.TABLE, new UpdateableColumn<>(Organism.DNA, dna), String.class, false);
     }
 
     public OrganismRecord(QueryFactory factory) {

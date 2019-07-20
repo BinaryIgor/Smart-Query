@@ -7,7 +7,7 @@ import com.iprogrammerr.smart.query.active.UpdateableColumn;
 public class AuthorRecord extends ActiveRecord<Integer, Author> {
 
     public AuthorRecord(QueryFactory factory, Integer id) {
-        super(factory, Author.TABLE, true, Integer.class, new UpdateableColumn<>(Author.ID, id),
+        super(factory, Author.TABLE, new UpdateableColumn<>(Author.ID, id), Integer.class, true,
             new UpdateableColumn<>(Author.NAME), new UpdateableColumn<>(Author.ALIAS));
     }
 

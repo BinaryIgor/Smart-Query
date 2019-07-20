@@ -12,18 +12,18 @@ public abstract class ActiveRecord<Id, Table> {
 
     protected final QueryFactory factory;
     protected final String table;
-    protected final boolean autoIncrementId;
-    protected final Class<Id> idClazz;
     protected final UpdateableColumn<Id> id;
+    protected final Class<Id> idClazz;
+    protected final boolean autoIncrementId;
     protected final UpdateableColumn[] columns;
 
-    protected ActiveRecord(QueryFactory factory, String table, boolean autoIncrementId, Class<Id> idClazz,
-        UpdateableColumn id, UpdateableColumn... columns) {
+    public ActiveRecord(QueryFactory factory, String table, UpdateableColumn<Id> id, Class<Id> idClazz,
+        boolean autoIncrementId, UpdateableColumn... columns) {
         this.factory = factory;
         this.table = table;
+        this.id = id;
         this.idClazz = idClazz;
         this.autoIncrementId = autoIncrementId;
-        this.id = id;
         this.columns = columns;
     }
 
