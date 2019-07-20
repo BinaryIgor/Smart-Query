@@ -7,11 +7,11 @@ import org.junit.Test;
 
 public class SmartQueryDslTest {
 
-    private TestDatabaseSetup setup;
+    private TestDatabase setup;
 
     @Before
     public void setup() {
-        setup = new TestDatabaseSetup();
+        setup = new TestDatabase();
         setup.setup();
     }
 

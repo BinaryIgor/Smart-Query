@@ -8,62 +8,84 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
-public abstract class ActiveRecord<T> {
+public abstract class ActiveRecord<Id, Table> {
 
     protected final QueryFactory factory;
     protected final String table;
-    protected final UpdateableColumn id;
+    protected final boolean autoIncrementId;
+    protected final Class<Id> idClazz;
+    protected final UpdateableColumn<Id> id;
     protected final UpdateableColumn[] columns;
 
-    protected ActiveRecord(QueryFactory factory, String table, UpdateableColumn id, UpdateableColumn... columns) {
+    protected ActiveRecord(QueryFactory factory, String table, boolean autoIncrementId, Class<Id> idClazz,
+        UpdateableColumn id, UpdateableColumn... columns) {
         this.factory = factory;
         this.table = table;
+        this.idClazz = idClazz;
+        this.autoIncrementId = autoIncrementId;
         this.id = id;
         this.columns = columns;
     }
 
     protected void set(String column, Object value) {
-        if (id.name().equals(column)) {
-            id.setValue(value);
+        if (shouldSetId(column, value)) {
+            id.set(idClazz.cast(value));
         } else {
             for (UpdateableColumn c : columns) {
                 if (c.name().equals(column)) {
-                    c.setValue(value);
+                    c.set(value);
                     break;
                 }
             }
         }
     }
 
-    public abstract T fetch();
+    private boolean shouldSetId(String column, Object value) {
+        return !autoIncrementId && column.equals(id.name()) && (value == null
+            || value.getClass().isAssignableFrom(idClazz));
+    }
+
+    public abstract Table fetch();
+
+    public Id getId() {
+        Id value = id.value();
+        if (value == null) {
+            throw new RuntimeException("Id isn't initialized");
+        }
+        return value;
+    }
+
+    private void setId(long id) {
+        try {
+            if (idClazz.isAssignableFrom(Long.class)) {
+                this.id.set(idClazz.cast(id));
+            } else if (idClazz.isAssignableFrom(Integer.class)) {
+                this.id.set(idClazz.cast((int) id));
+            } else {
+                this.id.set(idClazz.cast((short) id));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Id is not of Number type");
+        }
+    }
 
     protected Query fetchQuery() {
         return factory.newQuery().dsl()
-            .selectAll().from(table).where(id.name()).equal().value(id.value())
+            .selectAll().from(table).where(id.name()).equal().value(getId())
             .query();
     }
 
     public void insert() {
-        insert(false);
-    }
-
-    public long insertReturningId() {
-        return insert(true);
-    }
-
-    private long insert(boolean returnId) {
         List<UpdateableColumn> changed = changed();
-        long id = -1;
         if (!changed.isEmpty()) {
             Query query = insertQuery(changed);
-            if (returnId) {
-                id = query.executeReturningId();
+            if (autoIncrementId) {
+                long id = query.executeReturningId();
                 setId(id);
             } else {
                 query.execute();
             }
         }
-        return id;
     }
 
     private Query insertQuery(List<UpdateableColumn> changed) {
@@ -79,15 +101,6 @@ public abstract class ActiveRecord<T> {
         return dsl.columns(first.name(), columns).values(first.value(), values).query();
     }
 
-    private void setId(long id) {
-        try {
-            UpdateableColumn<Number> castedId = (UpdateableColumn<Number>) this.id;
-            castedId.setValue(id);
-        } catch (Exception e) {
-            throw new RuntimeException("There was a problem while using auto generated id ", e);
-        }
-    }
-
     private List<UpdateableColumn> changed() {
         List<UpdateableColumn> changed = new ArrayList<>();
         for (UpdateableColumn c : columns) {
@@ -100,17 +113,19 @@ public abstract class ActiveRecord<T> {
 
     public void update() {
         List<UpdateableColumn> changed = changed();
-        QueryDsl dsl = factory.newQuery().dsl().update(table);
-        for (UpdateableColumn c : changed) {
-            dsl.set(c.name(), c.value());
+        if (!changed.isEmpty()) {
+            QueryDsl dsl = factory.newQuery().dsl().update(table);
+            for (UpdateableColumn c : changed) {
+                dsl.set(c.name(), c.value());
+            }
+            dsl.where(id.name()).equal().value(getId())
+                .query()
+                .execute();
         }
-        dsl.where(id.name()).equal().value(id.value())
-            .query()
-            .execute();
     }
 
     public void delete() {
-        factory.newQuery().dsl().delete(table).where(id.name()).equal().value(id.value())
+        factory.newQuery().dsl().delete(table).where(id.name()).equal().value(getId())
             .query()
             .execute();
     }

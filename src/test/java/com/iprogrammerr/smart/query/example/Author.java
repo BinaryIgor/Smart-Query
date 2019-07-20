@@ -1,8 +1,8 @@
-package com.iprogrammerr.smart.query;
+package com.iprogrammerr.smart.query.example;
 
 import java.sql.ResultSet;
 
-class Author {
+public class Author {
 
     public static final String TABLE = "author";
     public static final String ID = "id";

@@ -9,27 +9,27 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 
-public class TestDatabaseSetup {
+public class TestDatabase {
 
     private final String user;
     private final String password;
     private final String jdbcUrl;
     private DataSource source;
 
-    public TestDatabaseSetup(String user, String password, String jdbcUrl) {
+    public TestDatabase(String user, String password, String jdbcUrl) {
         this.user = user;
         this.password = password;
         this.jdbcUrl = jdbcUrl;
     }
 
-    public TestDatabaseSetup() {
+    public TestDatabase() {
         this("test", "test", "jdbc:h2:mem:test");
     }
 
     public void setup() {
         try (Connection c = source().getConnection();
              BufferedReader r = new BufferedReader(new InputStreamReader(
-                 TestDatabaseSetup.class.getResourceAsStream("/schema.sql")))) {
+                 TestDatabase.class.getResourceAsStream("/schema.sql")))) {
             RunScript.execute(c, r);
         } catch (Exception e) {
             throw new RuntimeException();

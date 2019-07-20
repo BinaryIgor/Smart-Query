@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 
 public class SmartQueryFactoryTest {
 
-    private final TestDatabaseSetup setup = new TestDatabaseSetup();
+    private final TestDatabase setup = new TestDatabase();
 
     @Test
     public void createsSmartQuery() {

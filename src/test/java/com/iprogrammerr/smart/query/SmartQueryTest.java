@@ -1,5 +1,6 @@
 package com.iprogrammerr.smart.query;
 
+import com.iprogrammerr.smart.query.example.Author;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -9,11 +10,11 @@ import java.sql.Connection;
 
 public class SmartQueryTest {
 
-    private TestDatabaseSetup setup;
+    private TestDatabase setup;
 
     @Before
     public void setup() {
-        setup = new TestDatabaseSetup();
+        setup = new TestDatabase();
         setup.setup();
     }
 
