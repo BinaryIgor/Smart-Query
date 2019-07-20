@@ -65,7 +65,7 @@ public abstract class ActiveRecord<Id, Table> {
                 this.id.set(idClazz.cast((short) id));
             }
         } catch (Exception e) {
-            throw new RuntimeException("Id is not of Number type");
+            throw new RuntimeException("Id isn't of Number type", e);
         }
     }
 
