@@ -90,7 +90,7 @@ System.out.println(query.template());
 System.out.println(query.values());
 ```
 ## Active record
-There is a ActiveRecord base class, which can be used to create table specific extensions. Example:
+There is an ActiveRecord base class, which can be used to create table specific extensions.
 ```java
 package com.iprogrammerr.smart.query.example;
 
