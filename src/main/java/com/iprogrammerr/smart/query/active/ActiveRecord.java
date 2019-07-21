@@ -65,7 +65,7 @@ public abstract class ActiveRecord<Id, Table> {
                 this.id.setNewValue(idClazz.cast((short) id));
             }
         } catch (Exception e) {
-            throw new RuntimeException("Autoincrement id must be either long, int or short", e);
+            throw new RuntimeException("Autoincrement id must be of long, int or short type", e);
         }
     }
 
@@ -77,23 +77,17 @@ public abstract class ActiveRecord<Id, Table> {
 
     public void insert() {
         List<UpdateableColumn> changed = changed();
-        if (shouldInsertWithAutoIncrement(changed)) {
+        if (changed.isEmpty()) {
+            return;
+        }
+        if (autoIncrementId) {
             Query query = insertQuery(changed);
             long id = query.executeReturningId();
             setId(id);
-            markChange(changed);
-        } else if (shouldInsertWithNaturalId(changed)) {
+        } else {
             insertQuery(changed).execute();
-            markChange(changed);
         }
-    }
-
-    private boolean shouldInsertWithAutoIncrement(List<UpdateableColumn> changed) {
-        return autoIncrementId && !changed.isEmpty();
-    }
-
-    private boolean shouldInsertWithNaturalId(List<UpdateableColumn> changed) {
-        return !autoIncrementId && (!changed.isEmpty() || id.isUpdated());
+        markChanges(changed);
     }
 
     private Query insertQuery(List<UpdateableColumn> changed) {
@@ -124,26 +118,28 @@ public abstract class ActiveRecord<Id, Table> {
 
     public void update() {
         List<UpdateableColumn> changed = changed();
-        if (!changed.isEmpty()) {
-            QueryDsl dsl = factory.newQuery().dsl().update(table);
-            for (UpdateableColumn c : changed) {
-                dsl.set(c.name(), c.value());
-            }
-            dsl.where(id.name()).equal().value(getId())
-                .query()
-                .execute();
-            markChange(changed);
+        if (changed.isEmpty()) {
+            return;
         }
+        QueryDsl dsl = factory.newQuery().dsl().update(table);
+        for (UpdateableColumn c : changed) {
+            dsl.set(c.name(), c.value());
+        }
+        dsl.where(id.name()).equal().value(getId())
+            .query()
+            .execute();
+        markChanges(changed);
     }
 
-    private void markChange(List<UpdateableColumn> updated) {
+    private void markChanges(List<UpdateableColumn> updated) {
         for (UpdateableColumn c : updated) {
             c.setOldValue();
         }
     }
 
     public void delete() {
-        factory.newQuery().dsl().delete(table).where(id.name()).equal().value(getId())
+        factory.newQuery().dsl()
+            .delete(table).where(id.name()).equal().value(getId())
             .query()
             .execute();
     }
