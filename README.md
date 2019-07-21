@@ -89,6 +89,56 @@ System.out.println(query.template());
 //To bind values
 System.out.println(query.values());
 ```
+## Active record
+There is a ActiveRecord base class, which can be used to create table specific extensions. Example:
+```
+package com.iprogrammerr.smart.query.example;
+
+import com.iprogrammerr.smart.query.QueryFactory;
+import com.iprogrammerr.smart.query.active.ActiveRecord;
+import com.iprogrammerr.smart.query.active.UpdateableColumn;
+
+public class AuthorRecord extends ActiveRecord<Integer, Author> {
+
+    public AuthorRecord(QueryFactory factory, Integer id) {
+        super(factory, Author.TABLE, new UpdateableColumn<>(Author.ID, id), Integer.class, true,
+            new UpdateableColumn<>(Author.NAME), new UpdateableColumn<>(Author.ALIAS));
+    }
+
+    public AuthorRecord(QueryFactory factory) {
+        this(factory, null);
+    }
+
+    @Override
+    public Author fetch() {
+        return fetchQuery().fetch(r -> {
+            r.next();
+            return new Author(r);
+        });
+    }
+
+    public AuthorRecord setName(String name) {
+        set(Author.NAME, name);
+        return this;
+    }
+
+    public AuthorRecord setAlias(String alias) {
+        set(Author.ALIAS, alias);
+        return this;
+    }
+}
+
+QueryFactory factory = new SmartQueryFactory(db.source());
+AuthorRecord record = new AuthorRecord(factory)
+    .setName("Friedrich Nietzsche")
+    .setAlias("Philosopher");
+record.insert();
+int id = record.getId();
+Author author = record.fetch();
+record.setName("Aristotle");
+record.update();
+record.delete();
+```
 ## Configuration
 Using factory you can easily configure your queries.
 ```java
