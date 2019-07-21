@@ -86,4 +86,18 @@ public class ActiveRecordTest {
 
         MatcherAssert.assertThat(deleted, Matchers.equalTo(deleted));
     }
+
+    @Test
+    public void countsChanges() {
+        AuthorRecord record = new AuthorRecord(factory);
+
+        MatcherAssert.assertThat(record.unsavedChanges(), Matchers.equalTo(0));
+        record.setName("Benjamin");
+        MatcherAssert.assertThat(record.unsavedChanges(), Matchers.equalTo(1));
+        record.setAlias("Polymath");
+        MatcherAssert.assertThat(record.unsavedChanges(), Matchers.equalTo(2));
+
+        record.insert();
+        MatcherAssert.assertThat(record.unsavedChanges(), Matchers.equalTo(0));
+    }
 }

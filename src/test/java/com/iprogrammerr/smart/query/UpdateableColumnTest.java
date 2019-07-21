@@ -11,7 +11,9 @@ public class UpdateableColumnTest {
     public void changesState() {
         UpdateableColumn<String> column = new UpdateableColumn<>("a", "a");
         MatcherAssert.assertThat(column.isUpdated(), Matchers.equalTo(false));
-        column.set("b");
+        column.setNewValue("b");
         MatcherAssert.assertThat(column.isUpdated(), Matchers.equalTo(true));
+        column.setOldValue();
+        MatcherAssert.assertThat(column.isUpdated(), Matchers.equalTo(false));
     }
 }

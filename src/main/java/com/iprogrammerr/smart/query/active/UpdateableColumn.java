@@ -16,9 +16,13 @@ public class UpdateableColumn<T> {
         this(name, null);
     }
 
-    public void set(T value) {
+    public void setNewValue(T value) {
         this.value = value;
         this.updated = true;
+    }
+
+    public void setOldValue() {
+        this.updated = false;
     }
 
     public String name() {

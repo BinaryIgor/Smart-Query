@@ -31,11 +31,11 @@ public abstract class ActiveRecord<Id, Table> {
 
     protected void set(String column, Object value) {
         if (shouldSetId(column, value)) {
-            id.set(idClazz.cast(value));
+            id.setNewValue(idClazz.cast(value));
         } else {
             for (UpdateableColumn c : columns) {
                 if (c.name().equals(column)) {
-                    c.set(value);
+                    c.setNewValue(value);
                     break;
                 }
             }
@@ -58,11 +58,11 @@ public abstract class ActiveRecord<Id, Table> {
     private void setId(long id) {
         try {
             if (idClazz.isAssignableFrom(Long.class)) {
-                this.id.set(idClazz.cast(id));
+                this.id.setNewValue(idClazz.cast(id));
             } else if (idClazz.isAssignableFrom(Integer.class)) {
-                this.id.set(idClazz.cast((int) id));
+                this.id.setNewValue(idClazz.cast((int) id));
             } else {
-                this.id.set(idClazz.cast((short) id));
+                this.id.setNewValue(idClazz.cast((short) id));
             }
         } catch (Exception e) {
             throw new RuntimeException("Autoincrement id must be either long, int or short", e);
@@ -81,8 +81,10 @@ public abstract class ActiveRecord<Id, Table> {
             Query query = insertQuery(changed);
             long id = query.executeReturningId();
             setId(id);
+            markChange(changed);
         } else if (shouldInsertWithNaturalId(changed)) {
             insertQuery(changed).execute();
+            markChange(changed);
         }
     }
 
@@ -130,6 +132,13 @@ public abstract class ActiveRecord<Id, Table> {
             dsl.where(id.name()).equal().value(getId())
                 .query()
                 .execute();
+            markChange(changed);
+        }
+    }
+
+    private void markChange(List<UpdateableColumn> updated) {
+        for (UpdateableColumn c : updated) {
+            c.setOldValue();
         }
     }
 
@@ -137,5 +146,9 @@ public abstract class ActiveRecord<Id, Table> {
         factory.newQuery().dsl().delete(table).where(id.name()).equal().value(getId())
             .query()
             .execute();
+    }
+
+    public int unsavedChanges() {
+        return changed().size();
     }
 }
