@@ -91,7 +91,7 @@ System.out.println(query.values());
 ```
 ## Active record
 There is a ActiveRecord base class, which can be used to create table specific extensions. Example:
-```
+```java
 package com.iprogrammerr.smart.query.example;
 
 import com.iprogrammerr.smart.query.QueryFactory;
