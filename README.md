@@ -139,6 +139,7 @@ record.setName("Aristotle");
 record.update();
 record.delete();
 ```
+You can use [Smart-Query-Meta](https://github.com/Iprogrammerr/Smart-Query-Meta) to generate both ActiveRecord extensions and tables representations.
 ## Configuration
 Using factory you can easily configure your queries.
 ```java
