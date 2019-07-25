@@ -1,6 +1,7 @@
 package com.iprogrammerr.smart.query.example;
 
 import java.sql.ResultSet;
+import java.util.Objects;
 
 public class Author {
 
@@ -19,8 +20,16 @@ public class Author {
         this.alias = alias;
     }
 
-    public Author(ResultSet result) throws Exception {
-        this(result.getLong(ID), result.getString(NAME), result.getString(ALIAS));
+    public static Author fromResult(ResultSet result, String idLabel, String nameLabel, String aliasLabel)
+        throws Exception {
+        long id = result.getLong(idLabel);
+        String name = result.getString(nameLabel);
+        String alias = result.getString(aliasLabel);
+        return new Author(id, name, alias);
+    }
+
+    public static Author fromResult(ResultSet result) throws Exception {
+        return fromResult(result, ID, NAME, ALIAS);
     }
 
     @Override
@@ -31,5 +40,19 @@ public class Author {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, alias);
+    }
+
+    @Override
+    public String toString() {
+        return "Author{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", alias='" + alias + '\'' +
+            '}';
     }
 }

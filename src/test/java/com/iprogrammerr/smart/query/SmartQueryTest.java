@@ -51,7 +51,7 @@ public class SmartQueryTest {
             .set(id)
             .fetch(r -> {
                 r.next();
-                return new Author(r);
+                return Author.fromResult(r);
             });
 
         MatcherAssert.assertThat(author, Matchers.equalTo(new Author(id, name, alias)));
@@ -94,7 +94,7 @@ public class SmartQueryTest {
             .sql("SELECT * FROM author")
             .fetch(r -> {
                 r.next();
-                return new Author(r);
+                return Author.fromResult(r);
             });
 
         MatcherAssert.assertThat(author, Matchers.equalTo(new Author(id, name, alias)));

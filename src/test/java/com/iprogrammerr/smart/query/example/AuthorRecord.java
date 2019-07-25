@@ -19,7 +19,7 @@ public class AuthorRecord extends ActiveRecord<Integer, Author> {
     public Author fetch() {
         return fetchQuery().fetch(r -> {
             r.next();
-            return new Author(r);
+            return Author.fromResult(r);
         });
     }
 
