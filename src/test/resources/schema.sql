@@ -31,6 +31,22 @@ CREATE TABLE user_book (
 	PRIMARY KEY (user_id, book_id)
 );
 
+DROP TABLE IF EXISTS user;
+CREATE TABLE user (
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	name VARCHAR(100) UNIQUE,
+	PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS user_book;
+CREATE TABLE user_book (
+    user_id INT UNSIGNED NOT NULL,
+	book_id INT UNSIGNED NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+	FOREIGN KEY (book_id) REFERENCES book(id) ON DELETE CASCADE,
+	PRIMARY KEY (user_id, book_id)
+);
+
 DROP TABLE IF EXISTS organism;
 CREATE TABLE organism (
 	dna VARCHAR(255) NOT NULL,

@@ -48,47 +48,47 @@ public class OneToManyMappingTest {
         MatcherAssert.assertThat(actual.entrySet(), Matchers.contains(first, second));
     }
 
-    public Map<Author, List<Book>> prepare() {
-        Map<Author, List<Book>> authors = new LinkedHashMap<>();
+    private Map<Author, List<Book>> prepare() {
+        Map<Author, List<Book>> records = new LinkedHashMap<>();
 
         AuthorRecord ar1 = new AuthorRecord(factory)
             .setName("Lem Stanisław")
             .setAlias("LS");
         ar1.insert();
         Author lem = ar1.fetch();
-        authors.put(lem, new ArrayList<>());
+        records.put(lem, new ArrayList<>());
 
         AuthorRecord ar2 = new AuthorRecord(factory)
             .setName("Aristotle")
             .setAlias("Philosopher");
         ar2.insert();
         Author aristotle = ar2.fetch();
-        authors.put(aristotle, new ArrayList<>());
+        records.put(aristotle, new ArrayList<>());
 
         BookRecord br1 = new BookRecord(factory)
             .setAuthorId(ar1.getId())
             .setTitle("Cyberiada");
         br1.insert();
-        authors.get(lem).add(br1.fetch());
+        records.get(lem).add(br1.fetch());
 
         BookRecord br2 = new BookRecord(factory)
             .setAuthorId(ar1.getId())
             .setTitle("Dzienniki Gwiazdowe");
         br2.insert();
-        authors.get(lem).add(br2.fetch());
+        records.get(lem).add(br2.fetch());
 
         BookRecord br3 = new BookRecord(factory)
-            .setAuthorId(br2.getId())
+            .setAuthorId(ar2.getId())
             .setTitle("Politics");
         br3.insert();
-        authors.get(aristotle).add(br3.fetch());
+        records.get(aristotle).add(br3.fetch());
 
         BookRecord br4 = new BookRecord(factory)
-            .setAuthorId(br2.getId())
+            .setAuthorId(ar2.getId())
             .setTitle("Physics");
         br4.insert();
-        authors.get(aristotle).add(br4.fetch());
+        records.get(aristotle).add(br4.fetch());
 
-        return authors;
+        return records;
     }
 }

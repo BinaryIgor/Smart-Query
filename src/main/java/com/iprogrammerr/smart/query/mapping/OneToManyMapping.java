@@ -27,7 +27,7 @@ public class OneToManyMapping<T, R> implements GroupsMapping<T, List<R>> {
 
     @Override
     public Map<T, List<R>> value(ResultSet result) throws Exception {
-        Map<T, List<R>> map = new LinkedHashMap<>();
+        Map<T, List<R>> groups = new LinkedHashMap<>();
         if (result.next()) {
             do {
                 T key = firstMapping.value(result);
@@ -37,9 +37,9 @@ public class OneToManyMapping<T, R> implements GroupsMapping<T, List<R>> {
                     values.add(secondMapping.value(result));
                     next = result.next() && predicate.belongsTo(key, result);
                 } while (next);
-                map.put(key, values);
+                groups.put(key, values);
             } while (!result.isAfterLast());
         }
-        return map;
+        return groups;
     }
 }
