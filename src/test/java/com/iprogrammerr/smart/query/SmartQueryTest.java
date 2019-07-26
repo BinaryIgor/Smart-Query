@@ -58,7 +58,7 @@ public class SmartQueryTest {
     }
 
     @Test
-    public void insertsAndFetchesClass() {
+    public void insertsAndFetchesByClass() {
         String name = "Ayn Rand";
         String alias = "AR";
 

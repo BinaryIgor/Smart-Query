@@ -2,17 +2,14 @@ package com.iprogrammerr.smart.query.mapping;
 
 import com.iprogrammerr.smart.query.ResultMapping;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-@SuppressWarnings("unchecked")
 public class ClassMapping<T> implements ResultMapping<T> {
 
     private final Class<T> clazz;
@@ -36,8 +33,8 @@ public class ClassMapping<T> implements ResultMapping<T> {
         }
         Constructor<T> constructor = clazz.getConstructor(ctrTypes);
         if (constructor == null) {
-            throw new RuntimeException(String.format("Cant't find appropriate constructor for declared fields: %s",
-                Arrays.toString(ctrTypes)));
+            throw new RuntimeException(String.format(
+                "Cant't find appropriate constructor for declared non-static fields: %s", fields));
         }
         return constructor.newInstance(values);
     }
@@ -53,22 +50,18 @@ public class ClassMapping<T> implements ResultMapping<T> {
     }
 
     private int fieldIndex(Field field, ResultSet result) throws Exception {
-        Annotation a = field.getAnnotation(Mapping.class);
         int idx = -1;
-        if (a == null) {
-            idx = result.findColumn(field.getName());
-        } else {
-            Mapping m = (Mapping) a;
-            String[] values = m.keys();
-            for (String v : values) {
-                idx = result.findColumn(v);
+        Mapping mapping = field.getAnnotation(Mapping.class);
+        if (mapping != null) {
+            for (String k : mapping.keys()) {
+                idx = result.findColumn(k);
                 if (idx >= 0) {
                     break;
                 }
             }
-            if (idx < 0) {
-                idx = result.findColumn(field.getName());
-            }
+        }
+        if (idx < 0) {
+            idx = result.findColumn(field.getName());
         }
         return idx;
     }
@@ -119,5 +112,4 @@ public class ClassMapping<T> implements ResultMapping<T> {
         }
         return value;
     }
-
 }
