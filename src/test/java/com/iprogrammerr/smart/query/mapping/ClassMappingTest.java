@@ -46,10 +46,7 @@ public class ClassMappingTest {
             .select("a.name as author", Book.TITLE).from(Author.TABLE).as("a")
             .innerJoin(Book.TABLE).as("b").on("a.id", "b.author_id")
             .query()
-            .fetch(r -> {
-                r.next();
-                return new ClassMapping<>(BookWithAuthor.class).value(r);
-            });
+            .fetch(new ClassMapping<>(BookWithAuthor.class, true));
 
         MatcherAssert.assertThat(actual, Matchers.equalTo(expected));
     }

@@ -21,8 +21,16 @@ public class OneToManyMapping<T, R> implements GroupsMapping<T, List<R>> {
         this.secondMapping = secondMapping;
     }
 
+    public OneToManyMapping(GroupPredicate<T> predicate, Class<T> firstClass, Class<R> secondClass) {
+        this(predicate, new ClassMapping<>(firstClass), new ClassMapping<>(secondClass));
+    }
+
     public OneToManyMapping(ResultMapping<T> firstMapping, ResultMapping<R> secondMapping) {
         this(new EqualsPredicate<>(firstMapping), firstMapping, secondMapping);
+    }
+
+    public OneToManyMapping(Class<T> firstClass, Class<R> secondClass) {
+        this(new ClassMapping<>(firstClass), new ClassMapping<>(secondClass));
     }
 
     @Override

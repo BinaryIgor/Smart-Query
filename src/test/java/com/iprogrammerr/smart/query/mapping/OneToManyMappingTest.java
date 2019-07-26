@@ -37,11 +37,7 @@ public class OneToManyMappingTest {
             .innerJoin(Book.TABLE).as("b").on("a.id", "b.author_id")
             .orderBy(Author.NAME).desc()
             .query()
-            .fetch(r1 -> new OneToManyMapping<>(
-                    Author::fromResult,
-                    r2 -> Book.fromResult(r2, "bid", Book.AUTHOR_ID, Book.TITLE)
-                ).value(r1)
-            );
+            .fetch(new OneToManyMapping<>(Author.class, Book.class));
         Iterator<Map.Entry<Author, List<Book>>> entries = expected.entrySet().iterator();
         Map.Entry<Author, List<Book>> first = entries.next();
         Map.Entry<Author, List<Book>> second = entries.next();

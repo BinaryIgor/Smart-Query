@@ -1,6 +1,5 @@
 package com.iprogrammerr.smart.query;
 
-import java.net.Authenticator;
 import java.sql.Connection;
 
 public class Example {

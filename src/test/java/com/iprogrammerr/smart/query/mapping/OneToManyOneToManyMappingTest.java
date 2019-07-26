@@ -41,12 +41,7 @@ public class OneToManyOneToManyMappingTest {
             .innerJoin(User.TABLE).as("u").on("ub.user_id", "u.id")
             .orderBy(Author.NAME).desc()
             .query()
-            .fetch(r1 -> new OneToManyOneToManyMapping<>(
-                    Author::fromResult,
-                    r2 -> Book.fromResult(r2, "bid", Book.AUTHOR_ID, Book.TITLE),
-                    r2 -> User.fromResult(r2, "uid", "uname")
-                ).value(r1)
-            );
+            .fetch(new OneToManyOneToManyMapping<>(Author.class, Book.class, User.class));
         MatcherAssert.assertThat(actual, new OrderedNestedMapMatcher<>(expected));
     }
 
@@ -122,7 +117,7 @@ public class OneToManyOneToManyMappingTest {
             .query().end().dsl()
             .insertInto(UserBook.TABLE).values(ur3.getId(), republic.id)
             .query()
-            .execute();
+            .executeTransaction();
 
         return records;
     }

@@ -1,5 +1,7 @@
 package com.iprogrammerr.smart.query.example;
 
+import com.iprogrammerr.smart.query.mapping.Mapping;
+
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,9 @@ public class Book {
     public static final String AUTHOR_ID = "author_id";
     public static final String TITLE = "title";
 
+    @Mapping(keys = "bid")
     public final Integer id;
+    @Mapping(keys = AUTHOR_ID)
     public final Integer authorId;
     public final String title;
 

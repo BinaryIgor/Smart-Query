@@ -31,9 +31,19 @@ public class OneToManyOneToManyMapping<T, R, P> implements GroupsMapping<T, Map<
         this(firstPredicate, new EqualsPredicate<>(secondMapping), firstMapping, secondMapping, thirdMapping);
     }
 
+    public OneToManyOneToManyMapping(GroupPredicate<T> firstPredicate, GroupPredicate<R> secondPredicate,
+        Class<T> firstClass, Class<R> secondClass, Class<P> thirdClass) {
+        this(firstPredicate, secondPredicate, new ClassMapping<>(firstClass), new ClassMapping<>(secondClass),
+            new ClassMapping<>(thirdClass));
+    }
+
     public OneToManyOneToManyMapping(ResultMapping<T> firstMapping, ResultMapping<R> secondMapping,
         ResultMapping<P> thirdMapping) {
         this(new EqualsPredicate<>(firstMapping), firstMapping, secondMapping, thirdMapping);
+    }
+
+    public OneToManyOneToManyMapping(Class<T> firstClass, Class<R> secondClass, Class<P> thirdClass) {
+        this(new ClassMapping<>(firstClass), new ClassMapping<>(secondClass), new ClassMapping<>(thirdClass));
     }
 
     @Override

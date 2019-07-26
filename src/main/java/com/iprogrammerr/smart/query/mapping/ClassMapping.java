@@ -16,13 +16,22 @@ import java.util.Map;
 public class ClassMapping<T> implements ResultMapping<T> {
 
     private final Class<T> clazz;
+    private final boolean moveResult;
+
+    public ClassMapping(Class<T> clazz, boolean moveResult) {
+        this.clazz = clazz;
+        this.moveResult = moveResult;
+    }
 
     public ClassMapping(Class<T> clazz) {
-        this.clazz = clazz;
+        this(clazz, false);
     }
 
     @Override
     public T value(ResultSet result) throws Exception {
+        if (moveResult) {
+            result.next();
+        }
         List<Field> fields = nonStaticFields();
         Map<String, Integer> labelsIndices = labelsIndices(result.getMetaData());
         Class<?>[] ctrTypes = new Class<?>[fields.size()];

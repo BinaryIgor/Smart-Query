@@ -22,7 +22,8 @@ public class OrganismRecord extends ActiveRecord<String, Organism> {
         });
     }
 
-    public void setDna(String dna) {
+    public OrganismRecord setDna(String dna) {
         set(Organism.DNA, dna);
+        return this;
     }
 }
