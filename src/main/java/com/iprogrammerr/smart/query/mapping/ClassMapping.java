@@ -6,9 +6,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ClassMapping<T> implements ResultMapping<T> {
 
@@ -21,12 +24,13 @@ public class ClassMapping<T> implements ResultMapping<T> {
     @Override
     public T value(ResultSet result) throws Exception {
         List<Field> fields = nonStaticFields();
+        Map<String, Integer> labelsIndices = labelsIndices(result.getMetaData());
         Class<?>[] ctrTypes = new Class<?>[fields.size()];
         Object[] values = new Object[fields.size()];
         for (int i = 0; i < fields.size(); i++) {
             Field f = fields.get(i);
             ctrTypes[i] = f.getType();
-            int idx = fieldIndex(f, result);
+            int idx = fieldIndex(f, labelsIndices);
             if (idx >= 0) {
                 values[i] = fieldValue(f.getType(), idx, result);
             }
@@ -39,6 +43,14 @@ public class ClassMapping<T> implements ResultMapping<T> {
         return constructor.newInstance(values);
     }
 
+    private Map<String, Integer> labelsIndices(ResultSetMetaData meta) throws Exception {
+        Map<String, Integer> labelsIndices = new HashMap<>();
+        for (int i = 1; i <= meta.getColumnCount(); i++) {
+            labelsIndices.put(meta.getColumnLabel(i).toLowerCase(), i);
+        }
+        return labelsIndices;
+    }
+
     private List<Field> nonStaticFields() {
         List<Field> nonStatic = new ArrayList<>();
         for (Field f : clazz.getDeclaredFields()) {
@@ -49,19 +61,19 @@ public class ClassMapping<T> implements ResultMapping<T> {
         return nonStatic;
     }
 
-    private int fieldIndex(Field field, ResultSet result) throws Exception {
+    private int fieldIndex(Field field, Map<String, Integer> labelsIndices) {
         int idx = -1;
         Mapping mapping = field.getAnnotation(Mapping.class);
         if (mapping != null) {
             for (String k : mapping.keys()) {
-                idx = result.findColumn(k);
+                idx = labelsIndices.getOrDefault(k.toLowerCase(), -1);
                 if (idx >= 0) {
                     break;
                 }
             }
         }
         if (idx < 0) {
-            idx = result.findColumn(field.getName());
+            idx = labelsIndices.getOrDefault(field.getName().toLowerCase(), -1);
         }
         return idx;
     }

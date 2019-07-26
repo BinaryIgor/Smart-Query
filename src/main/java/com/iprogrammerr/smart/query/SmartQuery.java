@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class SmartQuery implements Query {
@@ -100,6 +101,30 @@ public class SmartQuery implements Query {
         }
     }
 
+    @Override
+    public <T> T fetch(Class<T> clazz) {
+        return fetch(new ClassMapping<>(clazz), true);
+    }
+
+    @Override
+    public <T> void fetchInto(Collection<T> container, ResultMapping<T> mapping) {
+        try (PreparedStatement ps = prepared()) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                container.add(mapping.value(rs));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            closeConnection();
+        }
+    }
+
+    @Override
+    public <T> void fetchInto(Collection<T> container, Class<T> clazz) {
+        fetchInto(container, new ClassMapping<>(clazz));
+    }
+
     private void closeConnection() {
         try {
             if (close) {
@@ -130,11 +155,6 @@ public class SmartQuery implements Query {
 
     private PreparedStatement prepared() throws Exception {
         return prepared(false);
-    }
-
-    @Override
-    public <T> T fetch(Class<T> clazz) {
-        return fetch(new ClassMapping<>(clazz), true);
     }
 
     @Override

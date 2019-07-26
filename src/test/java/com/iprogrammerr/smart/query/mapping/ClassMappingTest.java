@@ -75,7 +75,7 @@ public class ClassMappingTest {
 
         BookWithUser expected = new BookWithUser(br.getId(), ur.getId(), book, user);
         BookWithUser actual = factory.newQuery().dsl()
-            .select("b.id as bid", "u.id as uid", Book.TITLE, "u.name as uname").from(Book.TABLE).as("b")
+            .select("b.id as bid", "u.id as uid", Book.TITLE, User.NAME).from(Book.TABLE).as("b")
             .innerJoin(UserBook.TABLE).as("ub").on("b.id", "ub.book_id")
             .innerJoin(User.TABLE).as("u").on("ub.user_id", "u.id")
             .query()

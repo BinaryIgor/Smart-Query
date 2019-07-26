@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.Connection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SmartQueryTest {
 
@@ -75,6 +77,32 @@ public class SmartQueryTest {
             .fetch(Author.class);
 
         MatcherAssert.assertThat(author, Matchers.equalTo(new Author(id, name, alias)));
+    }
+
+    @Test
+    public void insertsAndFetchesInto() {
+        String firstName = "Byron";
+        String firstAlias = "B";
+        String secondName = "Adam Smith";
+        String secondAlias = "AS";
+
+        long firstId = setup.query().dsl()
+            .insertInto(Author.TABLE).columns(Author.NAME, Author.ALIAS).values(firstName, firstAlias)
+            .query()
+            .executeReturningId();
+        long secondId = setup.query().dsl()
+            .insertInto(Author.TABLE).columns(Author.NAME, Author.ALIAS).values(secondName, secondAlias)
+            .query()
+            .executeReturningId();
+
+        Set<Author> actual = new HashSet<>();
+        setup.query().dsl()
+            .selectAll().from(Author.TABLE)
+            .query()
+            .fetchInto(actual, Author.class);
+
+        MatcherAssert.assertThat(actual, Matchers.contains(new Author(firstId, firstName, firstAlias),
+            new Author(secondId, secondName, secondAlias)));
     }
 
     @Test
