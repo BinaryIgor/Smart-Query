@@ -5,9 +5,12 @@ import com.iprogrammerr.smart.query.ResultMapping;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @SuppressWarnings("unchecked")
 public class ClassMapping<T> implements ResultMapping<T> {
@@ -20,11 +23,11 @@ public class ClassMapping<T> implements ResultMapping<T> {
 
     @Override
     public T value(ResultSet result) throws Exception {
-        Field[] fields = clazz.getDeclaredFields();
-        Class<?>[] ctrTypes = new Class<?>[fields.length];
-        Object[] values = new Object[fields.length];
-        for (int i = 0; i < fields.length; i++) {
-            Field f = fields[i];
+        List<Field> fields = nonStaticFields();
+        Class<?>[] ctrTypes = new Class<?>[fields.size()];
+        Object[] values = new Object[fields.size()];
+        for (int i = 0; i < fields.size(); i++) {
+            Field f = fields.get(i);
             ctrTypes[i] = f.getType();
             int idx = fieldIndex(f, result);
             if (idx >= 0) {
@@ -37,6 +40,16 @@ public class ClassMapping<T> implements ResultMapping<T> {
                 Arrays.toString(ctrTypes)));
         }
         return constructor.newInstance(values);
+    }
+
+    private List<Field> nonStaticFields() {
+        List<Field> nonStatic = new ArrayList<>();
+        for (Field f : clazz.getDeclaredFields()) {
+            if (!Modifier.isStatic(f.getModifiers())) {
+                nonStatic.add(f);
+            }
+        }
+        return nonStatic;
     }
 
     private int fieldIndex(Field field, ResultSet result) throws Exception {
@@ -62,28 +75,30 @@ public class ClassMapping<T> implements ResultMapping<T> {
 
     private Object fieldValue(Class<?> clazz, int idx, ResultSet result) throws Exception {
         Object value;
-        if (Number.class.isAssignableFrom(clazz)) {
-            value = numberValue((Class<? extends Number>) clazz, idx, result);
+        if (clazz.isPrimitive() || Number.class.isAssignableFrom(clazz)) {
+            value = numberOrPrimitive(clazz, idx, result);
         } else {
-            value = value(clazz, idx, result);
+            value = objectValue(clazz, idx, result);
         }
         return value;
     }
 
-    private Number numberValue(Class<? extends Number> clazz, int idx, ResultSet result) throws Exception {
-        Number value;
-        if (clazz.equals(Double.class)) {
+    private Object numberOrPrimitive(Class<?> clazz, int idx, ResultSet result) throws Exception {
+        Object value;
+        if (clazz.equals(Double.class) || clazz.equals(double.class)) {
             value = result.getDouble(idx);
-        } else if (clazz.equals(Float.class)) {
+        } else if (clazz.equals(Float.class) || clazz.equals(float.class)) {
             value = result.getFloat(idx);
-        } else if (clazz.equals(Long.class)) {
+        } else if (clazz.equals(Long.class) || clazz.equals(long.class)) {
             value = result.getLong(idx);
-        } else if (clazz.equals(Integer.class)) {
+        } else if (clazz.equals(Integer.class) || clazz.equals(int.class)) {
             value = result.getInt(idx);
-        } else if (clazz.equals(Short.class)) {
+        } else if (clazz.equals(Short.class) || clazz.equals(short.class)) {
             value = result.getShort(idx);
-        } else {
+        } else if (clazz.equals(Byte.class) || clazz.equals(byte.class)) {
             value = result.getByte(idx);
+        } else {
+            value = result.getBoolean(idx);
         }
         if (result.wasNull()) {
             value = null;
@@ -91,12 +106,10 @@ public class ClassMapping<T> implements ResultMapping<T> {
         return value;
     }
 
-    private Object value(Class<?> clazz, int idx, ResultSet result) throws Exception {
+    private Object objectValue(Class<?> clazz, int idx, ResultSet result) throws Exception {
         Object value;
         if (clazz.equals(String.class)) {
             value = result.getString(idx);
-        } else if (clazz.equals(Boolean.class)) {
-            value = result.getBoolean(idx);
         } else if (clazz.equals(byte[].class) || clazz.equals(Byte[].class)) {
             value = result.getBytes(idx);
         } else if (clazz.equals(Date.class)) {

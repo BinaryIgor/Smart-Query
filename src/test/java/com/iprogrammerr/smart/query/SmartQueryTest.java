@@ -58,6 +58,26 @@ public class SmartQueryTest {
     }
 
     @Test
+    public void insertsAndFetchesClass() {
+        String name = "Ayn Rand";
+        String alias = "AR";
+
+        long id = setup.query().dsl()
+            .insertInto(Author.TABLE).columns(Author.NAME, Author.ALIAS).values(name, alias)
+            .query()
+            .executeReturningId();
+
+        Author author = setup.query().dsl()
+            .select(Author.ID + " as aid", Author.NAME, Author.ALIAS).as(Author.ALIAS_ANONYM)
+            .from(Author.TABLE)
+            .where(Author.ID).equal().value(id)
+            .query()
+            .fetch(Author.class);
+
+        MatcherAssert.assertThat(author, Matchers.equalTo(new Author(id, name, alias)));
+    }
+
+    @Test
     public void insertsAndSearches() {
         String name = "Nikola";
         String alias = "Tesla";

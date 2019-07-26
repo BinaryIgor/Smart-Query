@@ -1,5 +1,7 @@
 package com.iprogrammerr.smart.query.example;
 
+import com.iprogrammerr.smart.query.mapping.Mapping;
+
 import java.sql.ResultSet;
 import java.util.Objects;
 
@@ -9,9 +11,12 @@ public class Author {
     public static final String ID = "id";
     public static final String NAME = "name";
     public static final String ALIAS = "alias";
+    public static final String ALIAS_ANONYM = "anonym";
 
+    @Mapping(keys = "aid")
     public final long id;
     public final String name;
+    @Mapping(keys = ALIAS_ANONYM)
     public final String alias;
 
     public Author(long id, String name, String alias) {
