@@ -3,11 +3,11 @@ package com.iprogrammerr.smart.query.mapping;
 import com.iprogrammerr.smart.query.QueryFactory;
 import com.iprogrammerr.smart.query.SmartQueryFactory;
 import com.iprogrammerr.smart.query.TestDatabase;
-import com.iprogrammerr.smart.query.example.table.Author;
-import com.iprogrammerr.smart.query.example.active.AuthorRecord;
 import com.iprogrammerr.smart.query.example.AuthorWithBooks;
-import com.iprogrammerr.smart.query.example.table.Book;
+import com.iprogrammerr.smart.query.example.active.AuthorRecord;
 import com.iprogrammerr.smart.query.example.active.BookRecord;
+import com.iprogrammerr.smart.query.example.table.Author;
+import com.iprogrammerr.smart.query.example.table.Book;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -81,7 +81,6 @@ public class OneToManyListMappingTest {
         br4.insert();
         aristotleBooks.add(br4.fetch());
 
-        return Arrays.asList(new AuthorWithBooks(lem, lemBooks),
-            new AuthorWithBooks(aristotle, aristotleBooks));
+        return Arrays.asList(new AuthorWithBooks(lem, lemBooks), new AuthorWithBooks(aristotle, aristotleBooks));
     }
 }

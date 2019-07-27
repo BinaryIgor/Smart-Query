@@ -4,6 +4,7 @@ import com.iprogrammerr.smart.query.QueryFactory;
 import com.iprogrammerr.smart.query.active.ActiveRecord;
 import com.iprogrammerr.smart.query.active.UpdateableColumn;
 import com.iprogrammerr.smart.query.example.table.Author;
+import com.iprogrammerr.smart.query.mapping.Mappings;
 
 public class AuthorRecord extends ActiveRecord<Integer, Author> {
 
@@ -18,10 +19,7 @@ public class AuthorRecord extends ActiveRecord<Integer, Author> {
 
     @Override
     public Author fetch() {
-        return fetchQuery().fetch(r -> {
-            r.next();
-            return Author.fromResult(r);
-        });
+        return fetchQuery().fetch(Mappings.ofClass(Author.class));
     }
 
     public AuthorRecord setName(String name) {

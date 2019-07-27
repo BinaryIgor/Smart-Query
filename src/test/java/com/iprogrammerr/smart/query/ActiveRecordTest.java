@@ -1,8 +1,8 @@
 package com.iprogrammerr.smart.query;
 
-import com.iprogrammerr.smart.query.example.table.Author;
 import com.iprogrammerr.smart.query.example.active.AuthorRecord;
 import com.iprogrammerr.smart.query.example.active.OrganismRecord;
+import com.iprogrammerr.smart.query.example.table.Author;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;

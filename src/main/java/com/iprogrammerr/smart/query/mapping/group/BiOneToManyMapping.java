@@ -16,18 +16,18 @@ public class BiOneToManyMapping<T, S, R, P> implements ResultMapping<P> {
     private final ResultMapping<S> secondMapping;
     private final ResultMapping<R> thirdMapping;
     private final BiGroupMapping<P, T, S, R> groupMapping;
-    private final boolean initResult;
+    private final boolean moveResult;
 
     public BiOneToManyMapping(GroupPredicate<T> firstPredicate, GroupPredicate<S> secondPredicate,
         ResultMapping<T> firstMapping, ResultMapping<S> secondMapping, ResultMapping<R> thirdMapping,
-        BiGroupMapping<P, T, S, R> groupMapping, boolean initResult) {
+        BiGroupMapping<P, T, S, R> groupMapping, boolean moveResult) {
         this.firstPredicate = firstPredicate;
         this.secondPredicate = secondPredicate;
         this.firstMapping = firstMapping;
         this.secondMapping = secondMapping;
         this.thirdMapping = thirdMapping;
         this.groupMapping = groupMapping;
-        this.initResult = initResult;
+        this.moveResult = moveResult;
     }
 
     public BiOneToManyMapping(GroupPredicate<T> firstPredicate, GroupPredicate<S> secondPredicate,
@@ -38,7 +38,7 @@ public class BiOneToManyMapping<T, S, R, P> implements ResultMapping<P> {
 
     @Override
     public P value(ResultSet result) throws Exception {
-        if (initResult) {
+        if (moveResult) {
             result.next();
         }
         T one = firstMapping.value(result);

@@ -38,7 +38,7 @@ public class BiOneToManyListMappingTest {
     public void doesMapping() {
         List<AuthorWithBooksWithUsers> expected = prepare();
         List<AuthorWithBooksWithUsers> actual = factory.newQuery().dsl()
-            .select("a.*", "b.id as bid", Book.AUTHOR_ID, Book.TITLE, "u.id as uid", "u.name as uname")
+            .select("a.*", "b.id as bid", Book.AUTHOR_ID, Book.TITLE, "u.id as u_id", "u.name as u_name")
             .from(Author.TABLE).as("a")
             .innerJoin(Book.TABLE).as("b").on("a.id", "b.author_id")
             .innerJoin(UserBook.TABLE).as("ub").on("b.id", "ub.book_id")

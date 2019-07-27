@@ -23,10 +23,10 @@ public class EqualsPredicateTest {
 
     @Test
     public void returnsEqual() {
-        returnsEqualOrNot(true);
+        returnsEqualUnequal(true);
     }
 
-    private void returnsEqualOrNot(boolean equal) {
+    private void returnsEqualUnequal(boolean equal) {
         String author = "Ayn Rand";
         factory.newQuery().dsl()
             .insertInto(Author.TABLE).columns(Author.NAME, Author.ALIAS).values(author, "AR")
@@ -48,6 +48,6 @@ public class EqualsPredicateTest {
 
     @Test
     public void returnsUnequal() {
-        returnsEqualOrNot(false);
+        returnsEqualUnequal(false);
     }
 }

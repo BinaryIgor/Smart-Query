@@ -47,6 +47,14 @@ CREATE TABLE user_book (
 	PRIMARY KEY (user_id, book_id)
 );
 
+DROP TABLE IF EXISTS pet;
+CREATE TABLE pet (
+	user_id INT UNSIGNED NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    PRIMARY KEY (user_id),
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+);
+
 DROP TABLE IF EXISTS organism;
 CREATE TABLE organism (
 	dna VARCHAR(255) NOT NULL,
