@@ -243,4 +243,20 @@ public class SmartQueryTest {
 
         MatcherAssert.assertThat(empty, Matchers.equalTo(true));
     }
+
+    @Test
+    public void returnsScrollableInTwoDirectionsResult() {
+        setup.query().dsl()
+            .insertInto(Author.TABLE).columns(Author.NAME, Author.ALIAS).values("Igor", "Ir")
+            .query().end()
+            .dsl()
+            .insertInto(Author.TABLE).columns(Author.NAME, Author.ALIAS).values("Secret", "S")
+            .query()
+            .executeTransaction();
+
+        boolean scrollable = setup.query().sql("SELECT id FROM author")
+            .fetch(r -> r.next() && r.next() && r.previous());
+
+        MatcherAssert.assertThat(scrollable, Matchers.equalTo(true));
+    }
 }

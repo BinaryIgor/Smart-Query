@@ -106,7 +106,8 @@ public class SmartQuery implements Query {
         if (returnId) {
             ps = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
         } else {
-            ps = connection.prepareStatement(query);
+            ps = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY,
+                ResultSet.CLOSE_CURSORS_AT_COMMIT);
         }
         for (int i = 0; i < values.size(); i++) {
             setValue(ps, i, values.get(i));
