@@ -36,8 +36,8 @@ public class Mappings {
         return new OneToManyMapping<>(predicate, firstMapping, secondMapping, groupMapping, true);
     }
 
-    public static <T, R, P> ResultMapping<P> oneToMany(ResultMapping<T> firstMapping,
-        ResultMapping<R> secondMapping, GroupMapping<P, T, R> groupMapping) {
+    public static <T, R, P> ResultMapping<P> oneToMany(ResultMapping<T> firstMapping, ResultMapping<R> secondMapping,
+        GroupMapping<P, T, R> groupMapping) {
         return oneToMany(new EqualsPredicate<>(firstMapping), firstMapping, secondMapping, groupMapping);
     }
 

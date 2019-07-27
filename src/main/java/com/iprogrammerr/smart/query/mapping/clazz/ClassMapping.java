@@ -129,17 +129,17 @@ public class ClassMapping<T> implements ResultMapping<T> {
 
     private Object numberOrPrimitive(Class<?> clazz, int idx, ResultSet result) throws Exception {
         Object value;
-        if (clazz.equals(Double.class) || clazz.equals(double.class)) {
+        if (isDouble(clazz)) {
             value = result.getDouble(idx);
-        } else if (clazz.equals(Float.class) || clazz.equals(float.class)) {
+        } else if (isFloat(clazz)) {
             value = result.getFloat(idx);
-        } else if (clazz.equals(Long.class) || clazz.equals(long.class)) {
+        } else if (isLong(clazz)) {
             value = result.getLong(idx);
-        } else if (clazz.equals(Integer.class) || clazz.equals(int.class)) {
+        } else if (isInt(clazz)) {
             value = result.getInt(idx);
-        } else if (clazz.equals(Short.class) || clazz.equals(short.class)) {
+        } else if (isShort(clazz)) {
             value = result.getShort(idx);
-        } else if (clazz.equals(Byte.class) || clazz.equals(byte.class)) {
+        } else if (isByte(clazz)) {
             value = result.getByte(idx);
         } else {
             value = result.getBoolean(idx);
@@ -150,17 +150,53 @@ public class ClassMapping<T> implements ResultMapping<T> {
         return value;
     }
 
+    private boolean isDouble(Class<?> clazz) {
+        return clazz.equals(double.class) || clazz.equals(Double.class);
+    }
+
+    private boolean isFloat(Class<?> clazz) {
+        return clazz.equals(float.class) || clazz.equals(Float.class);
+    }
+
+    private boolean isLong(Class<?> clazz) {
+        return clazz.equals(long.class) || clazz.equals(Long.class);
+    }
+
+    private boolean isInt(Class<?> clazz) {
+        return clazz.equals(int.class) || clazz.equals(Integer.class);
+    }
+
+    private boolean isShort(Class<?> clazz) {
+        return clazz.equals(short.class) || clazz.equals(Short.class);
+    }
+
+    private boolean isByte(Class<?> clazz) {
+        return clazz.equals(byte.class) || clazz.equals(Byte.class);
+    }
+
     private Object objectValue(Class<?> clazz, int idx, ResultSet result) throws Exception {
         Object value;
-        if (clazz.equals(String.class)) {
+        if (isString(clazz)) {
             value = result.getString(idx);
-        } else if (clazz.equals(byte[].class) || clazz.equals(Byte[].class)) {
+        } else if (isBytes(clazz)) {
             value = result.getBytes(idx);
-        } else if (clazz.equals(Date.class)) {
+        } else if (isDate(clazz)) {
             value = result.getDate(idx);
         } else {
             value = result.getObject(idx);
         }
         return value;
+    }
+
+    private boolean isString(Class<?> clazz) {
+        return clazz.equals(String.class);
+    }
+
+    private boolean isBytes(Class<?> clazz) {
+        return clazz.equals(byte[].class) || clazz.equals(Byte[].class);
+    }
+
+    private boolean isDate(Class<?> clazz) {
+        return clazz.equals(Date.class);
     }
 }
