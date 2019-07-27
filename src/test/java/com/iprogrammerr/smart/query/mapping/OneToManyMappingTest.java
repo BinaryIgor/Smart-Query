@@ -17,7 +17,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OneToManyMappingTest {
 
@@ -38,10 +37,7 @@ public class OneToManyMappingTest {
             .innerJoin(Book.TABLE).as("b").on("a.id", "b.author_id")
             .orderBy(Author.NAME).desc()
             .query()
-            .fetch(new OneToManyMapping<>(Author.class, Book.class))
-            .stream()
-            .map(e -> new AuthorWithBooks(e.one, e.many))
-            .collect(Collectors.toList());
+            .fetch(new OneToManyMapping<>(Author.class, Book.class, AuthorWithBooks::new));
 
         MatcherAssert.assertThat(actual, Matchers.contains(expected.get(0), expected.get(1)));
 

@@ -5,13 +5,16 @@ import com.iprogrammerr.smart.query.SmartQueryFactory;
 import com.iprogrammerr.smart.query.TestDatabase;
 import com.iprogrammerr.smart.query.example.Author;
 import com.iprogrammerr.smart.query.example.AuthorRecord;
+import com.iprogrammerr.smart.query.example.AuthorWithBooksWithUsers;
 import com.iprogrammerr.smart.query.example.Book;
 import com.iprogrammerr.smart.query.example.BookRecord;
+import com.iprogrammerr.smart.query.example.BookWithUsers;
 import com.iprogrammerr.smart.query.example.User;
 import com.iprogrammerr.smart.query.example.UserBook;
 import com.iprogrammerr.smart.query.example.UserRecord;
 import com.iprogrammerr.smart.query.mapping.group.OneToManyOneToManyMapping;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class OneToManyOneToManyMappingTest {
 
@@ -33,8 +37,8 @@ public class OneToManyOneToManyMappingTest {
 
     @Test
     public void doesMapping() {
-        Map<Author, Map<Book, List<User>>> expected = prepare();
-        Map<Author, Map<Book, List<User>>> actual = factory.newQuery().dsl()
+        List<AuthorWithBooksWithUsers> expected = prepare();
+        List<AuthorWithBooksWithUsers> actual = factory.newQuery().dsl()
             .select("a.*", "b.id as bid", Book.AUTHOR_ID, Book.TITLE, "u.id as uid", "u.name as uname")
             .from(Author.TABLE).as("a")
             .innerJoin(Book.TABLE).as("b").on("a.id", "b.author_id")
@@ -42,11 +46,17 @@ public class OneToManyOneToManyMappingTest {
             .innerJoin(User.TABLE).as("u").on("ub.user_id", "u.id")
             .orderBy(Author.NAME).desc()
             .query()
-            .fetch(new OneToManyOneToManyMapping<>(Author.class, Book.class, User.class));
-        MatcherAssert.assertThat(actual, new OrderedNestedMapMatcher<>(expected));
+            .fetch(new OneToManyOneToManyMapping<>(Author.class, Book.class, User.class,
+                (one, many) -> {
+                    List<BookWithUsers> books = many.entrySet().stream().map(e ->
+                        new BookWithUsers(e.getKey(), e.getValue())
+                    ).collect(Collectors.toList());
+                    return new AuthorWithBooksWithUsers(one, books);
+                }));
+        MatcherAssert.assertThat(expected, Matchers.contains(actual.toArray(new AuthorWithBooksWithUsers[0])));
     }
 
-    private Map<Author, Map<Book, List<User>>> prepare() {
+    private List<AuthorWithBooksWithUsers> prepare() {
         Map<Author, Map<Book, List<User>>> records = new LinkedHashMap<>();
 
         AuthorRecord ar1 = new AuthorRecord(factory)
@@ -120,6 +130,11 @@ public class OneToManyOneToManyMappingTest {
             .query()
             .executeTransaction();
 
-        return records;
+        return records.entrySet().stream().map(e -> {
+            List<BookWithUsers> books = e.getValue().entrySet().stream()
+                .map(ie -> new BookWithUsers(ie.getKey(), ie.getValue()))
+                .collect(Collectors.toList());
+            return new AuthorWithBooksWithUsers(e.getKey(), books);
+        }).collect(Collectors.toList());
     }
 }

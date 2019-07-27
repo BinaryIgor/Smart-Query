@@ -7,44 +7,48 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OneToManyMapping<T, R> implements ResultMapping<List<OneToMany<T, R>>> {
+public class OneToManyMapping<T, R, P> implements ResultMapping<List<P>> {
 
     private final GroupPredicate<T> predicate;
     private final ResultMapping<T> firstMapping;
     private final ResultMapping<R> secondMapping;
+    private final GroupMapping<P, T, R> groupMapping;
 
     public OneToManyMapping(GroupPredicate<T> predicate, ResultMapping<T> firstMapping,
-        ResultMapping<R> secondMapping) {
+        ResultMapping<R> secondMapping, GroupMapping<P, T, R> groupMapping) {
         this.predicate = predicate;
         this.firstMapping = firstMapping;
         this.secondMapping = secondMapping;
+        this.groupMapping = groupMapping;
     }
 
-    public OneToManyMapping(GroupPredicate<T> predicate, Class<T> firstClass, Class<R> secondClass) {
-        this(predicate, new ClassMapping<>(firstClass), new ClassMapping<>(secondClass));
+    public OneToManyMapping(GroupPredicate<T> predicate, Class<T> firstClass, Class<R> secondClass,
+        GroupMapping<P, T, R> groupMapping) {
+        this(predicate, new ClassMapping<>(firstClass), new ClassMapping<>(secondClass), groupMapping);
     }
 
-    public OneToManyMapping(ResultMapping<T> firstMapping, ResultMapping<R> secondMapping) {
-        this(new EqualsPredicate<>(firstMapping), firstMapping, secondMapping);
+    public OneToManyMapping(ResultMapping<T> firstMapping, ResultMapping<R> secondMapping,
+        GroupMapping<P, T, R> groupMapping) {
+        this(new EqualsPredicate<>(firstMapping), firstMapping, secondMapping, groupMapping);
     }
 
-    public OneToManyMapping(Class<T> firstClass, Class<R> secondClass) {
-        this(new ClassMapping<>(firstClass), new ClassMapping<>(secondClass));
+    public OneToManyMapping(Class<T> firstClass, Class<R> secondClass, GroupMapping<P, T, R> groupMapping) {
+        this(new ClassMapping<>(firstClass), new ClassMapping<>(secondClass), groupMapping);
     }
 
     @Override
-    public List<OneToMany<T, R>> value(ResultSet result) throws Exception {
-        List<OneToMany<T, R>> results = new ArrayList<>();
+    public List<P> value(ResultSet result) throws Exception {
+        List<P> results = new ArrayList<>();
         if (result.next()) {
             do {
-                T key = firstMapping.value(result);
-                List<R> values = new ArrayList<>();
+                T one = firstMapping.value(result);
+                List<R> many = new ArrayList<>();
                 boolean next;
                 do {
-                    values.add(secondMapping.value(result));
-                    next = result.next() && predicate.belongsTo(key, result);
+                    many.add(secondMapping.value(result));
+                    next = result.next() && predicate.belongsTo(one, result);
                 } while (next);
-                results.add(new OneToMany<>(key, values));
+                results.add(groupMapping.value(one, many));
             } while (!result.isAfterLast());
         }
         return results;
