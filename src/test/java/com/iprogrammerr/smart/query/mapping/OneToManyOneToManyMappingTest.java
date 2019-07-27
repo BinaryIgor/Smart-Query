@@ -47,11 +47,12 @@ public class OneToManyOneToManyMappingTest {
             .query()
             .fetch(Mappings.oneToManyOneToMany(Author.class, Book.class, User.class,
                 (one, many) -> {
-                    List<BookWithUsers> books = many.entrySet().stream().map(e ->
-                        new BookWithUsers(e.getKey(), e.getValue())
-                    ).collect(Collectors.toList());
+                    List<BookWithUsers> books = many.entrySet().stream()
+                        .map(e -> new BookWithUsers(e.getKey(), e.getValue()))
+                        .collect(Collectors.toList());
                     return new AuthorWithBooksWithUsers(one, books);
                 }));
+
         MatcherAssert.assertThat(actual, Matchers.equalTo(expected));
     }
 
@@ -107,9 +108,9 @@ public class OneToManyOneToManyMappingTest {
             .query()
             .executeTransaction();
 
-        List<BookWithUsers> books = records.entrySet().stream().map(e ->
-            new BookWithUsers(e.getKey(), e.getValue())
-        ).collect(Collectors.toList());
+        List<BookWithUsers> books = records.entrySet().stream()
+            .map(e -> new BookWithUsers(e.getKey(), e.getValue()))
+            .collect(Collectors.toList());
         return new AuthorWithBooksWithUsers(ar.fetch(), books);
     }
 }

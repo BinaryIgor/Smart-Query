@@ -4,7 +4,7 @@ import com.iprogrammerr.smart.query.ResultMapping;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +42,7 @@ public class OneToManyOneToManyMapping<T, S, R, P> implements ResultMapping<P> {
             result.next();
         }
         T one = firstMapping.value(result);
-        Map<S, List<R>> many = new HashMap<>();
+        Map<S, List<R>> many = new LinkedHashMap<>();
         boolean outerNext;
         do {
             S innerOne = secondMapping.value(result);

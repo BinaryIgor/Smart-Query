@@ -47,12 +47,13 @@ public class OneToManyOneToManyListMappingTest {
             .query()
             .fetch(Mappings.listOfOneToManyOneToMany(Author.class, Book.class, User.class,
                 (one, many) -> {
-                    List<BookWithUsers> books = many.entrySet().stream().map(e ->
-                        new BookWithUsers(e.getKey(), e.getValue())
-                    ).collect(Collectors.toList());
+                    List<BookWithUsers> books = many.entrySet().stream()
+                        .map(e -> new BookWithUsers(e.getKey(), e.getValue()))
+                        .collect(Collectors.toList());
                     return new AuthorWithBooksWithUsers(one, books);
                 }));
-        MatcherAssert.assertThat(expected, Matchers.contains(actual.toArray(new AuthorWithBooksWithUsers[0])));
+
+        MatcherAssert.assertThat(actual, Matchers.equalTo(expected));
     }
 
     private List<AuthorWithBooksWithUsers> prepare() {

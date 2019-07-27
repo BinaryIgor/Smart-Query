@@ -26,4 +26,12 @@ public class AuthorWithBooksWithUsers {
     public int hashCode() {
         return Objects.hash(author, books);
     }
+
+    @Override
+    public String toString() {
+        return "AuthorWithBooksWithUsers{" +
+            "author=" + author +
+            ", books=" + books +
+            '}';
+    }
 }
