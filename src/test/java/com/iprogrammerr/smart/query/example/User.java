@@ -13,9 +13,9 @@ public class User {
     public static final String ID = "id";
     public static final String NAME = "name";
 
-    @Mapping(keys = "uid")
+    @Mapping(labels = "uid")
     public final int id;
-    @Mapping(keys = "uname")
+    @Mapping(labels = "uname")
     public final String name;
 
     public User(int id, String name) {

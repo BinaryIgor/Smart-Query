@@ -6,13 +6,13 @@ import java.util.Objects;
 
 public class BookWithUser {
 
-    @Mapping(keys = "bid")
+    @Mapping(labels = "bid")
     private final int bookId;
-    @Mapping(keys = "uid")
+    @Mapping(labels = "uid")
     private final int userId;
-    @Mapping(keys = "title")
+    @Mapping(labels = "title")
     private final String book;
-    @Mapping(keys = "name")
+    @Mapping(labels = "name")
     private final String user;
 
     public BookWithUser(int bookId, int userId, String book, String user) {

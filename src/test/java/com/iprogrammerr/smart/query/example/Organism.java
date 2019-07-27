@@ -10,7 +10,7 @@ public class Organism {
     public static final String TABLE = "organism";
     public static final String DNA = "dna";
 
-    @Mapping(keys = "id")
+    @Mapping(labels = "id")
     public final String dna;
 
     public Organism(String dna) {

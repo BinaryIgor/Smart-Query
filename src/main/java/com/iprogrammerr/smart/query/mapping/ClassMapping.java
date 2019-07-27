@@ -7,10 +7,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ClassMapping<T> implements ResultMapping<T> {
@@ -32,24 +31,49 @@ public class ClassMapping<T> implements ResultMapping<T> {
         if (moveResult) {
             result.next();
         }
-        List<Field> fields = nonStaticFields();
+        ClassFields fields = fields();
         Map<String, Integer> labelsIndices = labelsIndices(result.getMetaData());
         Class<?>[] ctrTypes = new Class<?>[fields.size()];
         Object[] values = new Object[fields.size()];
-        for (int i = 0; i < fields.size(); i++) {
-            Field f = fields.get(i);
+        int i = 0;
+        for (Map.Entry<Field, ClassFields.Type> e : fields.fieldTypes.entrySet()) {
+            Field f = e.getKey();
             ctrTypes[i] = f.getType();
-            int idx = fieldIndex(f, labelsIndices);
-            if (idx >= 0) {
-                values[i] = fieldValue(f.getType(), idx, result);
+            if (e.getValue() == ClassFields.Type.PRIMITIVE) {
+                int idx = fieldIndex(f, labelsIndices);
+                if (idx >= 0) {
+                    values[i] = fieldValue(f.getType(), idx, result);
+                }
+            } else {
+                values[i] = new ClassMapping<>(f.getType()).value(result);
             }
+            i++;
         }
-        Constructor<T> constructor = clazz.getConstructor(ctrTypes);
+        return newInstance(clazz.getConstructor(ctrTypes), values, fields);
+    }
+
+    private T newInstance(Constructor<T> constructor, Object[] values, ClassFields fields) {
         if (constructor == null) {
             throw new RuntimeException(String.format(
                 "Cant't find appropriate constructor for declared non-static fields: %s", fields));
         }
-        return constructor.newInstance(values);
+        try {
+            return constructor.newInstance(values);
+        } catch (Exception e) {
+            throw new RuntimeException(failToCreateMessage(constructor, values), e);
+        }
+    }
+
+    private String failToCreateMessage(Constructor<T> constructor, Object[] values) {
+        return new StringBuilder()
+            .append("Constructor:")
+            .append(System.lineSeparator())
+            .append(constructor)
+            .append(System.lineSeparator())
+            .append("Values:")
+            .append(System.lineSeparator())
+            .append(Arrays.toString(values))
+            .toString();
     }
 
     private Map<String, Integer> labelsIndices(ResultSetMetaData meta) throws Exception {
@@ -60,22 +84,28 @@ public class ClassMapping<T> implements ResultMapping<T> {
         return labelsIndices;
     }
 
-    private List<Field> nonStaticFields() {
-        List<Field> nonStatic = new ArrayList<>();
+    private ClassFields fields() {
+        ClassFields fields = new ClassFields();
         for (Field f : clazz.getDeclaredFields()) {
-            if (!Modifier.isStatic(f.getModifiers())) {
-                nonStatic.add(f);
+            if (Modifier.isStatic(f.getModifiers())) {
+                continue;
+            }
+            Embedded e = f.getAnnotation(Embedded.class);
+            if (e == null) {
+                fields.putPrimitive(f);
+            } else {
+                fields.putObject(f);
             }
         }
-        return nonStatic;
+        return fields;
     }
 
     private int fieldIndex(Field field, Map<String, Integer> labelsIndices) {
         int idx = -1;
         Mapping mapping = field.getAnnotation(Mapping.class);
         if (mapping != null) {
-            for (String k : mapping.keys()) {
-                idx = labelsIndices.getOrDefault(k.toLowerCase(), -1);
+            for (String l : mapping.labels()) {
+                idx = labelsIndices.getOrDefault(l.toLowerCase(), -1);
                 if (idx >= 0) {
                     break;
                 }

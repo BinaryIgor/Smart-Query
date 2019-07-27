@@ -5,6 +5,7 @@ import com.iprogrammerr.smart.query.SmartQueryFactory;
 import com.iprogrammerr.smart.query.TestDatabase;
 import com.iprogrammerr.smart.query.example.Author;
 import com.iprogrammerr.smart.query.example.AuthorRecord;
+import com.iprogrammerr.smart.query.example.AuthorWithBook;
 import com.iprogrammerr.smart.query.example.Book;
 import com.iprogrammerr.smart.query.example.BookRecord;
 import com.iprogrammerr.smart.query.example.BookWithAuthor;
@@ -52,7 +53,7 @@ public class ClassMappingTest {
     }
 
     @Test
-    public void mapsFromAnnotations() {
+    public void mapsFromMappingAnnotations() {
         String book = "Thus Spoke Zarathustra";
         String user = "Igor";
         AuthorRecord ar = new AuthorRecord(factory)
@@ -76,10 +77,74 @@ public class ClassMappingTest {
             .innerJoin(UserBook.TABLE).as("ub").on("b.id", "ub.book_id")
             .innerJoin(User.TABLE).as("u").on("ub.user_id", "u.id")
             .query()
-            .fetch(r -> {
-                r.next();
-                return new ClassMapping<>(BookWithUser.class).value(r);
-            });
+            .fetch(new ClassMapping<>(BookWithUser.class, true));
+
+        MatcherAssert.assertThat(actual, Matchers.equalTo(expected));
+    }
+
+    @Test
+    public void mapsFromEmbeddedAnnotations() {
+        String author = "Fyodor Dostoevsky";
+        String alias = "FD";
+        String book = "Demons";
+        AuthorRecord ar = new AuthorRecord(factory)
+            .setName(author)
+            .setAlias(alias);
+        ar.insert();
+        BookRecord br = new BookRecord(factory)
+            .setAuthorId(ar.getId())
+            .setTitle(book);
+        br.insert();
+
+        AuthorWithBook expected = new AuthorWithBook(ar.fetch(), br.fetch(), 1);
+        AuthorWithBook actual = factory.newQuery().dsl()
+            .select("a.*", "b.id as bid", Book.AUTHOR_ID, Book.TITLE).append(", ")
+            .count(Book.AUTHOR_ID).as("books")
+            .from(Author.TABLE).as("a")
+            .innerJoin(Book.TABLE).as("b").on("a.id", "b.author_id")
+            .query()
+            .fetch(new ClassMapping<>(AuthorWithBook.class, true));
+
+        MatcherAssert.assertThat(actual, Matchers.equalTo(expected));
+    }
+
+    @Test
+    public void throwsExceptionOnNullPrimitives() {
+        String author = "Author";
+        String alias = "a";
+        AuthorRecord ar = new AuthorRecord(factory)
+            .setName(author)
+            .setAlias(alias);
+        ar.insert();
+
+        String message = "";
+        try {
+            factory.newQuery().dsl()
+                .select(Author.NAME, Author.ALIAS).from(Author.TABLE)
+                .query()
+                .fetch(new ClassMapping<>(Author.class, true));
+        } catch (Exception e) {
+            message = e.getMessage();
+        }
+
+        MatcherAssert.assertThat(message, Matchers.stringContainsInOrder("Constructor:",
+            Author.class.getSimpleName(), "Values:"));
+    }
+
+    @Test
+    public void insertsNullInLackingValues() {
+        String author = "Genius";
+        String alias = "g";
+        AuthorRecord ar = new AuthorRecord(factory)
+            .setName(author)
+            .setAlias(alias);
+        ar.insert();
+
+        Author expected = new Author(ar.getId(), null, null);
+        Author actual = factory.newQuery().dsl()
+            .select(Author.ID).from(Author.TABLE)
+            .query()
+            .fetch(new ClassMapping<>(Author.class, true));
 
         MatcherAssert.assertThat(actual, Matchers.equalTo(expected));
     }

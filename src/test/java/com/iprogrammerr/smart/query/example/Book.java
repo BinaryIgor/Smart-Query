@@ -14,9 +14,9 @@ public class Book {
     public static final String AUTHOR_ID = "author_id";
     public static final String TITLE = "title";
 
-    @Mapping(keys = "bid")
+    @Mapping(labels = "bid")
     public final Integer id;
-    @Mapping(keys = AUTHOR_ID)
+    @Mapping(labels = AUTHOR_ID)
     public final Integer authorId;
     public final String title;
 

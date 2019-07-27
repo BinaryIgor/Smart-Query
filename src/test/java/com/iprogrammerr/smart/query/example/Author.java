@@ -13,10 +13,10 @@ public class Author {
     public static final String ALIAS = "alias";
     public static final String ALIAS_ANONYM = "anonym";
 
-    @Mapping(keys = "aid")
+    @Mapping(labels = "aid")
     public final long id;
     public final String name;
-    @Mapping(keys = ALIAS_ANONYM)
+    @Mapping(labels = ALIAS_ANONYM)
     public final String alias;
 
     public Author(long id, String name, String alias) {
@@ -38,13 +38,13 @@ public class Author {
     }
 
     @Override
-    public boolean equals(Object object) {
-        try {
-            Author other = (Author) object;
-            return id == other.id && name.equals(other.name) && alias.equals(other.alias);
-        } catch (Exception e) {
-            return false;
-        }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Author author = (Author) o;
+        return id == author.id &&
+            Objects.equals(name, author.name) &&
+            Objects.equals(alias, author.alias);
     }
 
     @Override
