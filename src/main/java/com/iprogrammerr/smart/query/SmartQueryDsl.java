@@ -9,6 +9,7 @@ public class SmartQueryDsl implements QueryDsl {
     private static final String SPACE = " ";
     private static final String BRACKET_START = "(";
     private static final String BRACKET_END = ")";
+    private static final String WHERE = "WHERE";
     private final Query query;
     private final StringBuilder template;
     private final List<Object> values;
@@ -99,8 +100,14 @@ public class SmartQueryDsl implements QueryDsl {
     }
 
     @Override
+    public QueryDsl where() {
+        template.append(SPACE).append(WHERE);
+        return this;
+    }
+
+    @Override
     public QueryDsl where(String column) {
-        template.append(" WHERE ").append(column);
+        template.append(SPACE).append(WHERE).append(SPACE).append(column);
         return this;
     }
 
@@ -392,6 +399,18 @@ public class SmartQueryDsl implements QueryDsl {
     @Override
     public QueryDsl max(String column) {
         template.append(" MAX");
+        return inBracket(column);
+    }
+
+    @Override
+    public QueryDsl lower(String column) {
+        template.append(" LOWER");
+        return inBracket(column);
+    }
+
+    @Override
+    public QueryDsl upper(String column) {
+        template.append(" UPPER");
         return inBracket(column);
     }
 

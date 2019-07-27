@@ -107,6 +107,11 @@ public class SmartQueryDslTest {
 
     @Test
     public void appendsWhere() {
+        appends(dsl().where(), "WHERE");
+    }
+
+    @Test
+    public void appendsWhereColumn() {
         appends(dsl().where("name"), "WHERE name");
     }
 
@@ -348,6 +353,16 @@ public class SmartQueryDslTest {
     @Test
     public void appendsMax() {
         appends(dsl().max("y"), "MAX(y)");
+    }
+
+    @Test
+    public void appendsLower() {
+        appends(dsl().lower("name"), "LOWER(name)");
+    }
+
+    @Test
+    public void appendsUpper() {
+        appends(dsl().upper("alias"), "UPPER(alias)");
     }
 
     @Test

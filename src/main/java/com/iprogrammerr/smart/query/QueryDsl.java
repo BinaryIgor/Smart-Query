@@ -18,6 +18,8 @@ public interface QueryDsl {
 
     QueryDsl delete(String table);
 
+    QueryDsl where();
+
     QueryDsl where(String column);
 
     QueryDsl equal();
@@ -107,6 +109,10 @@ public interface QueryDsl {
     QueryDsl min(String column);
 
     QueryDsl max(String column);
+
+    QueryDsl lower(String column);
+
+    QueryDsl upper(String column);
 
     QueryDsl function(String name, Object... arguments);
 
