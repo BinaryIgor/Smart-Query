@@ -1,5 +1,7 @@
 package com.iprogrammerr.smart.query.example;
 
+import com.iprogrammerr.smart.query.example.table.Author;
+import com.iprogrammerr.smart.query.example.table.Book;
 import com.iprogrammerr.smart.query.mapping.clazz.Embedded;
 import com.iprogrammerr.smart.query.mapping.clazz.Mapping;
 

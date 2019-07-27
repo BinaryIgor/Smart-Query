@@ -3,14 +3,14 @@ package com.iprogrammerr.smart.query.mapping;
 import com.iprogrammerr.smart.query.ResultMapping;
 import com.iprogrammerr.smart.query.mapping.clazz.ClassMapping;
 import com.iprogrammerr.smart.query.mapping.group.BiGroupMapping;
+import com.iprogrammerr.smart.query.mapping.group.BiOneToManyListMapping;
+import com.iprogrammerr.smart.query.mapping.group.BiOneToManyMapping;
 import com.iprogrammerr.smart.query.mapping.group.EqualsPredicate;
 import com.iprogrammerr.smart.query.mapping.group.GroupMapping;
 import com.iprogrammerr.smart.query.mapping.group.GroupPredicate;
 import com.iprogrammerr.smart.query.mapping.group.ManyMapping;
 import com.iprogrammerr.smart.query.mapping.group.OneToManyListMapping;
 import com.iprogrammerr.smart.query.mapping.group.OneToManyMapping;
-import com.iprogrammerr.smart.query.mapping.group.OneToManyOneToManyListMapping;
-import com.iprogrammerr.smart.query.mapping.group.OneToManyOneToManyMapping;
 
 import java.util.List;
 
@@ -72,55 +72,55 @@ public class Mappings {
         return listOfOneToMany(new ClassMapping<>(firstClass), new ClassMapping<>(secondClass), groupMapping);
     }
 
-    public static <T, S, R, P> ResultMapping<P> oneToManyOneToMany(GroupPredicate<T> firstPredicate,
+    public static <T, S, R, P> ResultMapping<P> biOneToMany(GroupPredicate<T> firstPredicate,
         GroupPredicate<S> secondPredicate, ResultMapping<T> firstMapping, ResultMapping<S> secondMapping,
         ResultMapping<R> thirdMapping, BiGroupMapping<P, T, S, R> groupMapping) {
-        return new OneToManyOneToManyMapping<>(firstPredicate, secondPredicate, firstMapping, secondMapping,
+        return new BiOneToManyMapping<>(firstPredicate, secondPredicate, firstMapping, secondMapping,
             thirdMapping, groupMapping, true);
     }
 
-    public static <T, S, R, P> ResultMapping<P> oneToManyOneToMany(ResultMapping<T> firstMapping,
+    public static <T, S, R, P> ResultMapping<P> biOneToMany(ResultMapping<T> firstMapping,
         ResultMapping<S> secondMapping, ResultMapping<R> thirdMapping, BiGroupMapping<P, T, S, R> groupMapping) {
-        return oneToManyOneToMany(new EqualsPredicate<>(firstMapping), new EqualsPredicate<>(secondMapping),
+        return biOneToMany(new EqualsPredicate<>(firstMapping), new EqualsPredicate<>(secondMapping),
             firstMapping, secondMapping, thirdMapping, groupMapping);
     }
 
-    public static <T, S, R, P> ResultMapping<P> oneToManyOneToMany(GroupPredicate<T> firstPredicate,
+    public static <T, S, R, P> ResultMapping<P> biOneToMany(GroupPredicate<T> firstPredicate,
         GroupPredicate<S> secondPredicate, Class<T> firstClass, Class<S> secondClass, Class<R> thirdClass,
         BiGroupMapping<P, T, S, R> groupMapping) {
-        return oneToManyOneToMany(firstPredicate, secondPredicate, new ClassMapping<>(firstClass),
+        return biOneToMany(firstPredicate, secondPredicate, new ClassMapping<>(firstClass),
             new ClassMapping<>(secondClass), new ClassMapping<>(thirdClass), groupMapping);
     }
 
-    public static <T, S, R, P> ResultMapping<P> oneToManyOneToMany(Class<T> firstClass, Class<S> secondClass,
+    public static <T, S, R, P> ResultMapping<P> biOneToMany(Class<T> firstClass, Class<S> secondClass,
         Class<R> thirdClass, BiGroupMapping<P, T, S, R> groupMapping) {
-        return oneToManyOneToMany(new ClassMapping<>(firstClass), new ClassMapping<>(secondClass),
+        return biOneToMany(new ClassMapping<>(firstClass), new ClassMapping<>(secondClass),
             new ClassMapping<>(thirdClass), groupMapping);
     }
 
-    public static <T, S, R, P> ResultMapping<List<P>> listOfOneToManyOneToMany(GroupPredicate<T> firstPredicate,
+    public static <T, S, R, P> ResultMapping<List<P>> listOfBiOneToMany(GroupPredicate<T> firstPredicate,
         GroupPredicate<S> secondPredicate, ResultMapping<T> firstMapping, ResultMapping<S> secondMapping,
         ResultMapping<R> thirdMapping, BiGroupMapping<P, T, S, R> groupMapping) {
-        return new OneToManyOneToManyListMapping<>(firstPredicate, secondPredicate, firstMapping, secondMapping,
+        return new BiOneToManyListMapping<>(firstPredicate, secondPredicate, firstMapping, secondMapping,
             thirdMapping, groupMapping);
     }
 
-    public static <T, S, R, P> ResultMapping<List<P>> listOfOneToManyOneToMany(ResultMapping<T> firstMapping,
+    public static <T, S, R, P> ResultMapping<List<P>> listOfBiOneToMany(ResultMapping<T> firstMapping,
         ResultMapping<S> secondMapping, ResultMapping<R> thirdMapping, BiGroupMapping<P, T, S, R> groupMapping) {
-        return listOfOneToManyOneToMany(new EqualsPredicate<>(firstMapping), new EqualsPredicate<>(secondMapping),
+        return listOfBiOneToMany(new EqualsPredicate<>(firstMapping), new EqualsPredicate<>(secondMapping),
             firstMapping, secondMapping, thirdMapping, groupMapping);
     }
 
-    public static <T, S, R, P> ResultMapping<List<P>> listOfOneToManyOneToMany(GroupPredicate<T> firstPredicate,
+    public static <T, S, R, P> ResultMapping<List<P>> listOfBiOneToMany(GroupPredicate<T> firstPredicate,
         GroupPredicate<S> secondPredicate, Class<T> firstClass, Class<S> secondClass, Class<R> thirdClass,
         BiGroupMapping<P, T, S, R> groupMapping) {
-        return listOfOneToManyOneToMany(firstPredicate, secondPredicate, new ClassMapping<>(firstClass),
+        return listOfBiOneToMany(firstPredicate, secondPredicate, new ClassMapping<>(firstClass),
             new ClassMapping<>(secondClass), new ClassMapping<>(thirdClass), groupMapping);
     }
 
-    public static <T, S, R, P> ResultMapping<List<P>> listOfOneToManyOneToMany(Class<T> firstClass,
+    public static <T, S, R, P> ResultMapping<List<P>> listOfBiOneToMany(Class<T> firstClass,
         Class<S> secondClass, Class<R> thirdClass, BiGroupMapping<P, T, S, R> groupMapping) {
-        return listOfOneToManyOneToMany(new ClassMapping<>(firstClass), new ClassMapping<>(secondClass),
+        return listOfBiOneToMany(new ClassMapping<>(firstClass), new ClassMapping<>(secondClass),
             new ClassMapping<>(thirdClass), groupMapping);
     }
 }

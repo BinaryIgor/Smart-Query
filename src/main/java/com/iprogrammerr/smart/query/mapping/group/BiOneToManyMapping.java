@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class OneToManyOneToManyMapping<T, S, R, P> implements ResultMapping<P> {
+public class BiOneToManyMapping<T, S, R, P> implements ResultMapping<P> {
 
     private final GroupPredicate<T> firstPredicate;
     private final GroupPredicate<S> secondPredicate;
@@ -18,7 +18,7 @@ public class OneToManyOneToManyMapping<T, S, R, P> implements ResultMapping<P> {
     private final BiGroupMapping<P, T, S, R> groupMapping;
     private final boolean initResult;
 
-    public OneToManyOneToManyMapping(GroupPredicate<T> firstPredicate, GroupPredicate<S> secondPredicate,
+    public BiOneToManyMapping(GroupPredicate<T> firstPredicate, GroupPredicate<S> secondPredicate,
         ResultMapping<T> firstMapping, ResultMapping<S> secondMapping, ResultMapping<R> thirdMapping,
         BiGroupMapping<P, T, S, R> groupMapping, boolean initResult) {
         this.firstPredicate = firstPredicate;
@@ -30,7 +30,7 @@ public class OneToManyOneToManyMapping<T, S, R, P> implements ResultMapping<P> {
         this.initResult = initResult;
     }
 
-    public OneToManyOneToManyMapping(GroupPredicate<T> firstPredicate, GroupPredicate<S> secondPredicate,
+    public BiOneToManyMapping(GroupPredicate<T> firstPredicate, GroupPredicate<S> secondPredicate,
         ResultMapping<T> firstMapping, ResultMapping<S> secondMapping, ResultMapping<R> thirdMapping,
         BiGroupMapping<P, T, S, R> groupMapping) {
         this(firstPredicate, secondPredicate, firstMapping, secondMapping, thirdMapping, groupMapping, false);

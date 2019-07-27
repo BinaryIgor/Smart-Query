@@ -1,10 +1,8 @@
-package com.iprogrammerr.smart.query.example;
+package com.iprogrammerr.smart.query.example.table;
 
 import com.iprogrammerr.smart.query.mapping.clazz.Mapping;
 
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class Book {
@@ -36,19 +34,6 @@ public class Book {
 
     public static Book fromResult(ResultSet result) throws Exception {
         return fromResult(result, ID, AUTHOR_ID, TITLE);
-    }
-
-    public static List<Book> listFromResult(ResultSet result, String idLabel, String authorIdLabel, String titleLabel)
-        throws Exception {
-        List<Book> list = new ArrayList<>();
-        do {
-            list.add(fromResult(result, idLabel, authorIdLabel, titleLabel));
-        } while (result.next());
-        return list;
-    }
-
-    public static List<Book> listFromResult(ResultSet result) throws Exception {
-        return listFromResult(result, ID, AUTHOR_ID, TITLE);
     }
 
     @Override

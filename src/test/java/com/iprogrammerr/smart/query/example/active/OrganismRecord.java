@@ -1,8 +1,9 @@
-package com.iprogrammerr.smart.query.example;
+package com.iprogrammerr.smart.query.example.active;
 
 import com.iprogrammerr.smart.query.QueryFactory;
 import com.iprogrammerr.smart.query.active.ActiveRecord;
 import com.iprogrammerr.smart.query.active.UpdateableColumn;
+import com.iprogrammerr.smart.query.example.table.Organism;
 
 public class OrganismRecord extends ActiveRecord<String, Organism> {
 

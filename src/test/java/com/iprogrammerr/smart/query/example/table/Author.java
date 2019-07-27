@@ -1,4 +1,4 @@
-package com.iprogrammerr.smart.query.example;
+package com.iprogrammerr.smart.query.example.table;
 
 import com.iprogrammerr.smart.query.mapping.clazz.Mapping;
 

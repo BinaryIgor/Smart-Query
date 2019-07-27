@@ -1,6 +1,6 @@
 package com.iprogrammerr.smart.query;
 
-import com.iprogrammerr.smart.query.example.Author;
+import com.iprogrammerr.smart.query.example.table.Author;
 import com.iprogrammerr.smart.query.mapping.Mappings;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

@@ -1,5 +1,8 @@
 package com.iprogrammerr.smart.query.example;
 
+import com.iprogrammerr.smart.query.example.table.Book;
+import com.iprogrammerr.smart.query.example.table.User;
+
 import java.util.List;
 import java.util.Objects;
 

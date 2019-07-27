@@ -3,15 +3,15 @@ package com.iprogrammerr.smart.query.mapping;
 import com.iprogrammerr.smart.query.QueryFactory;
 import com.iprogrammerr.smart.query.SmartQueryFactory;
 import com.iprogrammerr.smart.query.TestDatabase;
-import com.iprogrammerr.smart.query.example.Author;
-import com.iprogrammerr.smart.query.example.AuthorRecord;
+import com.iprogrammerr.smart.query.example.table.Author;
+import com.iprogrammerr.smart.query.example.active.AuthorRecord;
 import com.iprogrammerr.smart.query.example.AuthorWithBooksWithUsers;
-import com.iprogrammerr.smart.query.example.Book;
-import com.iprogrammerr.smart.query.example.BookRecord;
+import com.iprogrammerr.smart.query.example.table.Book;
+import com.iprogrammerr.smart.query.example.active.BookRecord;
 import com.iprogrammerr.smart.query.example.BookWithUsers;
-import com.iprogrammerr.smart.query.example.User;
-import com.iprogrammerr.smart.query.example.UserBook;
-import com.iprogrammerr.smart.query.example.UserRecord;
+import com.iprogrammerr.smart.query.example.table.User;
+import com.iprogrammerr.smart.query.example.table.UserBook;
+import com.iprogrammerr.smart.query.example.active.UserRecord;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class OneToManyOneToManyMappingTest {
+public class BiOneToManyMappingTest {
 
     private QueryFactory factory;
 
@@ -45,7 +45,7 @@ public class OneToManyOneToManyMappingTest {
             .innerJoin(User.TABLE).as("u").on("ub.user_id", "u.id")
             .where(Author.ALIAS).equal().value(expected.author.alias)
             .query()
-            .fetch(Mappings.oneToManyOneToMany(Author.class, Book.class, User.class,
+            .fetch(Mappings.biOneToMany(Author.class, Book.class, User.class,
                 (one, many) -> {
                     List<BookWithUsers> books = many.entrySet().stream()
                         .map(e -> new BookWithUsers(e.getKey(), e.getValue()))
