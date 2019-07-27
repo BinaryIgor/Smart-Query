@@ -1,7 +1,5 @@
 package com.iprogrammerr.smart.query;
 
-import com.iprogrammerr.smart.query.mapping.clazz.ClassMapping;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -83,26 +81,13 @@ public class SmartQuery implements Query {
 
     @Override
     public <T> T fetch(ResultMapping<T> mapping) {
-        return fetch(mapping, false);
-    }
-
-    private <T> T fetch(ResultMapping<T> mapping, boolean forward) {
         try (PreparedStatement ps = prepared()) {
-            ResultSet rs = ps.executeQuery();
-            if (forward) {
-                rs.next();
-            }
-            return mapping.value(rs);
+            return mapping.value(ps.executeQuery());
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
             closeConnection();
         }
-    }
-
-    @Override
-    public <T> T fetch(Class<T> clazz) {
-        return fetch(new ClassMapping<>(clazz), true);
     }
 
     private void closeConnection() {

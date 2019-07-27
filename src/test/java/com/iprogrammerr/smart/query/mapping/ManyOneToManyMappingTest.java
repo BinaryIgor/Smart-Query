@@ -8,7 +8,6 @@ import com.iprogrammerr.smart.query.example.AuthorRecord;
 import com.iprogrammerr.smart.query.example.AuthorWithBooks;
 import com.iprogrammerr.smart.query.example.Book;
 import com.iprogrammerr.smart.query.example.BookRecord;
-import com.iprogrammerr.smart.query.mapping.group.OneToManyMapping;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class OneToManyMappingTest {
+public class ManyOneToManyMappingTest {
 
     private QueryFactory factory;
 
@@ -37,10 +36,9 @@ public class OneToManyMappingTest {
             .innerJoin(Book.TABLE).as("b").on("a.id", "b.author_id")
             .orderBy(Author.NAME).desc()
             .query()
-            .fetch(new OneToManyMapping<>(Author.class, Book.class, AuthorWithBooks::new));
+            .fetch(Mapping.listOfOneToMany(Author.class, Book.class, AuthorWithBooks::new));
 
         MatcherAssert.assertThat(actual, Matchers.contains(expected.get(0), expected.get(1)));
-
     }
 
     private List<AuthorWithBooks> prepare() {

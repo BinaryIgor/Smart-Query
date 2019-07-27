@@ -12,8 +12,6 @@ public interface Query {
 
     <T> T fetch(ResultMapping<T> mapping);
 
-    <T> T fetch(Class<T> clazz);
-
     void execute();
 
     long executeReturningId();

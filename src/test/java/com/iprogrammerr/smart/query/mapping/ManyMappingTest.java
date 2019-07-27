@@ -4,7 +4,6 @@ import com.iprogrammerr.smart.query.QueryFactory;
 import com.iprogrammerr.smart.query.SmartQueryFactory;
 import com.iprogrammerr.smart.query.TestDatabase;
 import com.iprogrammerr.smart.query.example.Organism;
-import com.iprogrammerr.smart.query.mapping.group.ManyMapping;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -41,7 +40,7 @@ public class ManyMappingTest {
         List<Organism> actual = factory.newQuery().dsl()
             .select(Organism.DNA).as("id").from(Organism.TABLE)
             .query()
-            .fetch(new ManyMapping<>(Organism.class));
+            .fetch(Mapping.listOfClass(Organism.class));
 
         MatcherAssert.assertThat(actual, Matchers.contains(first, second, third));
     }
