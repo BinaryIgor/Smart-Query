@@ -11,25 +11,32 @@ public class SmartQuery implements Query {
     private static final String TEMPLATES_SEPARATOR = ";";
     private static final char VALUES_PLACEHOLDER = '?';
     private final Connection connection;
+    private final StatementPreparation preparation;
     private final StringBuilder template;
     private final List<Object> values;
     private final DialectTranslation translation;
     private final boolean close;
 
-    public SmartQuery(Connection connection, DialectTranslation translation, boolean close) {
+    public SmartQuery(Connection connection, StatementPreparation preparation, DialectTranslation translation,
+        boolean close) {
         this.connection = connection;
+        this.preparation = preparation;
         this.template = new StringBuilder();
         this.values = new ArrayList<>();
         this.translation = translation;
         this.close = close;
     }
 
-    public SmartQuery(Connection connection, boolean close) {
-        this(connection, DialectTranslation.DEFAULT, close);
+    public SmartQuery(Connection connection, DialectTranslation translation, boolean close) {
+        this(connection, new StatementPreparation(connection), translation, close);
     }
 
     public SmartQuery(Connection connection, DialectTranslation translation) {
         this(connection, translation, true);
+    }
+
+    public SmartQuery(Connection connection, boolean close) {
+        this(connection, DialectTranslation.DEFAULT, close);
     }
 
     public SmartQuery(Connection connection) {
@@ -101,22 +108,7 @@ public class SmartQuery implements Query {
     }
 
     private PreparedStatement prepared(boolean returnId) throws Exception {
-        PreparedStatement ps;
-        String query = template();
-        if (returnId) {
-            ps = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
-        } else {
-            ps = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY,
-                ResultSet.CLOSE_CURSORS_AT_COMMIT);
-        }
-        for (int i = 0; i < values.size(); i++) {
-            setValue(ps, i, values.get(i));
-        }
-        return ps;
-    }
-
-    private void setValue(PreparedStatement prepared, int index, Object value) throws Exception {
-        prepared.setObject(index + 1, value);
+        return preparation.prepare(template(), values, returnId);
     }
 
     private PreparedStatement prepared() throws Exception {
@@ -181,11 +173,9 @@ public class SmartQuery implements Query {
         String[] templates = template().split(TEMPLATES_SEPARATOR);
         int valuesStart = 0;
         for (String t : templates) {
-            long params = t.chars().filter(ch -> ch == VALUES_PLACEHOLDER).count();
-            PreparedStatement ps = connection.prepareStatement(t);
-            for (int i = 0; i < params; i++) {
-                setValue(ps, i, values.get(valuesStart + i));
-            }
+            int params = (int) t.chars().filter(ch -> ch == VALUES_PLACEHOLDER).count();
+            PreparedStatement ps = preparation.prepare(t, values.subList(valuesStart, valuesStart + params),
+                false);
             transactions.add(ps);
             valuesStart += params;
         }

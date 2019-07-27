@@ -1,6 +1,7 @@
 package com.iprogrammerr.smart.query.mapping.clazz;
 
 import com.iprogrammerr.smart.query.ResultMapping;
+import com.iprogrammerr.smart.query.Types;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -8,7 +9,6 @@ import java.lang.reflect.Modifier;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -119,7 +119,7 @@ public class ClassMapping<T> implements ResultMapping<T> {
 
     private Object fieldValue(Class<?> clazz, int idx, ResultSet result) throws Exception {
         Object value;
-        if (clazz.isPrimitive() || Number.class.isAssignableFrom(clazz)) {
+        if (Types.isNumberOrPrimitive(clazz)) {
             value = numberOrPrimitive(clazz, idx, result);
         } else {
             value = objectValue(clazz, idx, result);
@@ -129,17 +129,17 @@ public class ClassMapping<T> implements ResultMapping<T> {
 
     private Object numberOrPrimitive(Class<?> clazz, int idx, ResultSet result) throws Exception {
         Object value;
-        if (isDouble(clazz)) {
+        if (Types.isDouble(clazz)) {
             value = result.getDouble(idx);
-        } else if (isFloat(clazz)) {
+        } else if (Types.isFloat(clazz)) {
             value = result.getFloat(idx);
-        } else if (isLong(clazz)) {
+        } else if (Types.isLong(clazz)) {
             value = result.getLong(idx);
-        } else if (isInt(clazz)) {
+        } else if (Types.isInt(clazz)) {
             value = result.getInt(idx);
-        } else if (isShort(clazz)) {
+        } else if (Types.isShort(clazz)) {
             value = result.getShort(idx);
-        } else if (isByte(clazz)) {
+        } else if (Types.isByte(clazz)) {
             value = result.getByte(idx);
         } else {
             value = result.getBoolean(idx);
@@ -150,53 +150,17 @@ public class ClassMapping<T> implements ResultMapping<T> {
         return value;
     }
 
-    private boolean isDouble(Class<?> clazz) {
-        return clazz.equals(double.class) || clazz.equals(Double.class);
-    }
-
-    private boolean isFloat(Class<?> clazz) {
-        return clazz.equals(float.class) || clazz.equals(Float.class);
-    }
-
-    private boolean isLong(Class<?> clazz) {
-        return clazz.equals(long.class) || clazz.equals(Long.class);
-    }
-
-    private boolean isInt(Class<?> clazz) {
-        return clazz.equals(int.class) || clazz.equals(Integer.class);
-    }
-
-    private boolean isShort(Class<?> clazz) {
-        return clazz.equals(short.class) || clazz.equals(Short.class);
-    }
-
-    private boolean isByte(Class<?> clazz) {
-        return clazz.equals(byte.class) || clazz.equals(Byte.class);
-    }
-
     private Object objectValue(Class<?> clazz, int idx, ResultSet result) throws Exception {
         Object value;
-        if (isString(clazz)) {
+        if (Types.isString(clazz)) {
             value = result.getString(idx);
-        } else if (isBytes(clazz)) {
+        } else if (Types.isBytes(clazz)) {
             value = result.getBytes(idx);
-        } else if (isDate(clazz)) {
+        } else if (Types.isDate(clazz)) {
             value = result.getDate(idx);
         } else {
             value = result.getObject(idx);
         }
         return value;
-    }
-
-    private boolean isString(Class<?> clazz) {
-        return clazz.equals(String.class);
-    }
-
-    private boolean isBytes(Class<?> clazz) {
-        return clazz.equals(byte[].class) || clazz.equals(Byte[].class);
-    }
-
-    private boolean isDate(Class<?> clazz) {
-        return clazz.equals(Date.class);
     }
 }
