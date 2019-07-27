@@ -1,7 +1,7 @@
 package com.iprogrammerr.smart.query;
 
 import com.iprogrammerr.smart.query.example.Author;
-import com.iprogrammerr.smart.query.mapping.Mapping;
+import com.iprogrammerr.smart.query.mapping.Mappings;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -73,7 +73,7 @@ public class SmartQueryTest {
             .from(Author.TABLE)
             .where(Author.ID).equal().value(id)
             .query()
-            .fetch(Mapping.ofClass(Author.class));
+            .fetch(Mappings.ofClass(Author.class));
 
         MatcherAssert.assertThat(author, Matchers.equalTo(new Author(id, name, alias)));
     }

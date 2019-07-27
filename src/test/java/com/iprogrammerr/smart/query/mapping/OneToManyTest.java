@@ -35,7 +35,7 @@ public class OneToManyTest {
             .innerJoin(Book.TABLE).as("b").on("a.id", "b.author_id")
             .where(Author.NAME).equal().value(expected.author.name)
             .query()
-            .fetch(Mapping.oneToMany(Author.class, Book.class, AuthorWithBooks::new));
+            .fetch(Mappings.oneToMany(Author.class, Book.class, AuthorWithBooks::new));
 
         MatcherAssert.assertThat(actual, Matchers.equalTo(expected));
     }

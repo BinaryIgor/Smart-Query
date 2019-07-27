@@ -12,25 +12,25 @@ public class OneToManyMapping<T, R, P> implements ResultMapping<P> {
     private final ResultMapping<T> firstMapping;
     private final ResultMapping<R> secondMapping;
     private final GroupMapping<P, T, R> groupMapping;
-    private final boolean moveForward;
+    private final boolean initResult;
 
     public OneToManyMapping(GroupPredicate<T> predicate, ResultMapping<T> firstMapping, ResultMapping<R> secondMapping,
-        GroupMapping<P, T, R> groupMapping, boolean moveForward) {
+        GroupMapping<P, T, R> groupMapping, boolean initResult) {
         this.predicate = predicate;
         this.firstMapping = firstMapping;
         this.secondMapping = secondMapping;
         this.groupMapping = groupMapping;
-        this.moveForward = moveForward;
+        this.initResult = initResult;
     }
 
     public OneToManyMapping(GroupPredicate<T> predicate, ResultMapping<T> firstMapping, ResultMapping<R> secondMapping,
         GroupMapping<P, T, R> groupMapping) {
-        this(predicate, firstMapping, secondMapping, groupMapping, true);
+        this(predicate, firstMapping, secondMapping, groupMapping, false);
     }
 
     @Override
     public P value(ResultSet result) throws Exception {
-        if (moveForward) {
+        if (initResult) {
             result.next();
         }
         T one = firstMapping.value(result);

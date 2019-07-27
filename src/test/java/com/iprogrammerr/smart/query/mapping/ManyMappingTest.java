@@ -40,7 +40,7 @@ public class ManyMappingTest {
         List<Organism> actual = factory.newQuery().dsl()
             .select(Organism.DNA).as("id").from(Organism.TABLE)
             .query()
-            .fetch(Mapping.listOfClass(Organism.class));
+            .fetch(Mappings.listOfClass(Organism.class));
 
         MatcherAssert.assertThat(actual, Matchers.contains(first, second, third));
     }

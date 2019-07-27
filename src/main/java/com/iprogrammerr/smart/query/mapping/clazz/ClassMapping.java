@@ -15,11 +15,11 @@ import java.util.Map;
 public class ClassMapping<T> implements ResultMapping<T> {
 
     private final Class<T> clazz;
-    private final boolean moveResult;
+    private final boolean initResult;
 
-    public ClassMapping(Class<T> clazz, boolean moveResult) {
+    public ClassMapping(Class<T> clazz, boolean initResult) {
         this.clazz = clazz;
-        this.moveResult = moveResult;
+        this.initResult = initResult;
     }
 
     public ClassMapping(Class<T> clazz) {
@@ -28,7 +28,7 @@ public class ClassMapping<T> implements ResultMapping<T> {
 
     @Override
     public T value(ResultSet result) throws Exception {
-        if (moveResult) {
+        if (initResult) {
             result.next();
         }
         ClassFields fields = fields();

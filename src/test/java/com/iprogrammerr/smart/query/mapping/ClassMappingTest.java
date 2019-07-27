@@ -48,7 +48,7 @@ public class ClassMappingTest {
             .select("a.name as author", Book.TITLE).from(Author.TABLE).as("a")
             .innerJoin(Book.TABLE).as("b").on("a.id", "b.author_id")
             .query()
-            .fetch(Mapping.ofClass(BookWithAuthor.class));
+            .fetch(Mappings.ofClass(BookWithAuthor.class));
 
         MatcherAssert.assertThat(actual, Matchers.equalTo(expected));
     }
@@ -78,7 +78,7 @@ public class ClassMappingTest {
             .innerJoin(UserBook.TABLE).as("ub").on("b.id", "ub.book_id")
             .innerJoin(User.TABLE).as("u").on("ub.user_id", "u.id")
             .query()
-            .fetch(Mapping.ofClass(BookWithUser.class));
+            .fetch(Mappings.ofClass(BookWithUser.class));
 
         MatcherAssert.assertThat(actual, Matchers.equalTo(expected));
     }
@@ -104,7 +104,7 @@ public class ClassMappingTest {
             .from(Author.TABLE).as("a")
             .innerJoin(Book.TABLE).as("b").on("a.id", "b.author_id")
             .query()
-            .fetch(Mapping.ofClass(AuthorWithBook.class));
+            .fetch(Mappings.ofClass(AuthorWithBook.class));
 
         MatcherAssert.assertThat(actual, Matchers.equalTo(expected));
     }
@@ -145,7 +145,7 @@ public class ClassMappingTest {
         Author actual = factory.newQuery().dsl()
             .select(Author.ID).from(Author.TABLE)
             .query()
-            .fetch(Mapping.ofClass(Author.class));
+            .fetch(Mappings.ofClass(Author.class));
 
         MatcherAssert.assertThat(actual, Matchers.equalTo(expected));
     }

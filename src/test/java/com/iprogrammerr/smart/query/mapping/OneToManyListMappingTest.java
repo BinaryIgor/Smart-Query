@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ManyOneToManyMappingTest {
+public class OneToManyListMappingTest {
 
     private QueryFactory factory;
 
@@ -36,7 +36,7 @@ public class ManyOneToManyMappingTest {
             .innerJoin(Book.TABLE).as("b").on("a.id", "b.author_id")
             .orderBy(Author.NAME).desc()
             .query()
-            .fetch(Mapping.listOfOneToMany(Author.class, Book.class, AuthorWithBooks::new));
+            .fetch(Mappings.listOfOneToMany(Author.class, Book.class, AuthorWithBooks::new));
 
         MatcherAssert.assertThat(actual, Matchers.contains(expected.get(0), expected.get(1)));
     }

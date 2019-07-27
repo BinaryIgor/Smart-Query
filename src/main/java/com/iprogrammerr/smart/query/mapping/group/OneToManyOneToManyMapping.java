@@ -1,7 +1,6 @@
 package com.iprogrammerr.smart.query.mapping.group;
 
 import com.iprogrammerr.smart.query.ResultMapping;
-import com.iprogrammerr.smart.query.mapping.clazz.ClassMapping;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -9,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class OneToManyOneToManyMapping<T, S, R, P> implements ResultMapping<List<P>> {
+public class OneToManyOneToManyMapping<T, S, R, P> implements ResultMapping<P> {
 
     private final GroupPredicate<T> firstPredicate;
     private final GroupPredicate<S> secondPredicate;
@@ -17,61 +16,45 @@ public class OneToManyOneToManyMapping<T, S, R, P> implements ResultMapping<List
     private final ResultMapping<S> secondMapping;
     private final ResultMapping<R> thirdMapping;
     private final BiGroupMapping<P, T, S, R> groupMapping;
+    private final boolean initResult;
 
-    public OneToManyOneToManyMapping(GroupPredicate<T> firstPredicate,
-        GroupPredicate<S> secondPredicate, ResultMapping<T> firstMapping,
-        ResultMapping<S> secondMapping, ResultMapping<R> thirdMapping,
-        BiGroupMapping<P, T, S, R> groupMapping) {
+    public OneToManyOneToManyMapping(GroupPredicate<T> firstPredicate, GroupPredicate<S> secondPredicate,
+        ResultMapping<T> firstMapping, ResultMapping<S> secondMapping, ResultMapping<R> thirdMapping,
+        BiGroupMapping<P, T, S, R> groupMapping, boolean initResult) {
         this.firstPredicate = firstPredicate;
         this.secondPredicate = secondPredicate;
         this.firstMapping = firstMapping;
         this.secondMapping = secondMapping;
         this.thirdMapping = thirdMapping;
         this.groupMapping = groupMapping;
-    }
-
-    public OneToManyOneToManyMapping(ResultMapping<T> firstMapping, ResultMapping<S> secondMapping,
-        ResultMapping<R> thirdMapping, BiGroupMapping<P, T, S, R> groupMapping) {
-        this(new EqualsPredicate<>(firstMapping), new EqualsPredicate<>(secondMapping), firstMapping, secondMapping,
-            thirdMapping, groupMapping);
+        this.initResult = initResult;
     }
 
     public OneToManyOneToManyMapping(GroupPredicate<T> firstPredicate, GroupPredicate<S> secondPredicate,
-        Class<T> firstClass, Class<S> secondClass, Class<R> thirdClass, BiGroupMapping<P, T, S, R> groupMapping) {
-        this(firstPredicate, secondPredicate, new ClassMapping<>(firstClass), new ClassMapping<>(secondClass),
-            new ClassMapping<>(thirdClass), groupMapping);
-    }
-
-    public OneToManyOneToManyMapping(Class<T> firstClass, Class<S> secondClass, Class<R> thirdClass,
+        ResultMapping<T> firstMapping, ResultMapping<S> secondMapping, ResultMapping<R> thirdMapping,
         BiGroupMapping<P, T, S, R> groupMapping) {
-        this(new ClassMapping<>(firstClass), new ClassMapping<>(secondClass), new ClassMapping<>(thirdClass),
-            groupMapping);
+        this(firstPredicate, secondPredicate, firstMapping, secondMapping, thirdMapping, groupMapping, false);
     }
-
 
     @Override
-    public List<P> value(ResultSet result) throws Exception {
-        List<P> results = new ArrayList<>();
-        if (!result.next()) {
-            return results;
+    public P value(ResultSet result) throws Exception {
+        if (initResult) {
+            result.next();
         }
+        T one = firstMapping.value(result);
+        Map<S, List<R>> many = new HashMap<>();
+        boolean outerNext;
         do {
-            T one = firstMapping.value(result);
-            Map<S, List<R>> many = new HashMap<>();
-            boolean outerNext;
+            S innerOne = secondMapping.value(result);
+            List<R> innerMany = new ArrayList<>();
+            boolean innerNext;
             do {
-                S innerOne = secondMapping.value(result);
-                List<R> innerMany = new ArrayList<>();
-                boolean innerNext;
-                do {
-                    innerMany.add(thirdMapping.value(result));
-                    innerNext = result.next() && secondPredicate.belongsTo(innerOne, result);
-                } while (innerNext);
-                many.put(innerOne, innerMany);
-                outerNext = !result.isAfterLast() && firstPredicate.belongsTo(one, result);
-            } while (outerNext);
-            results.add(groupMapping.value(one, many));
-        } while (!result.isAfterLast());
-        return results;
+                innerMany.add(thirdMapping.value(result));
+                innerNext = result.next() && secondPredicate.belongsTo(innerOne, result);
+            } while (innerNext);
+            many.put(innerOne, innerMany);
+            outerNext = !result.isAfterLast() && firstPredicate.belongsTo(one, result);
+        } while (outerNext);
+        return groupMapping.value(one, many);
     }
 }

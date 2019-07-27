@@ -6,14 +6,14 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ManyOneToManyMapping<T, R, P> implements ResultMapping<List<P>> {
+public class OneToManyListMapping<T, R, P> implements ResultMapping<List<P>> {
 
     private final GroupPredicate<T> predicate;
     private final ResultMapping<T> firstMapping;
     private final ResultMapping<R> secondMapping;
     private final GroupMapping<P, T, R> groupMapping;
 
-    public ManyOneToManyMapping(GroupPredicate<T> predicate, ResultMapping<T> firstMapping,
+    public OneToManyListMapping(GroupPredicate<T> predicate, ResultMapping<T> firstMapping,
         ResultMapping<R> secondMapping, GroupMapping<P, T, R> groupMapping) {
         this.predicate = predicate;
         this.firstMapping = firstMapping;
