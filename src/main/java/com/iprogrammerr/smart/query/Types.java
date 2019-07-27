@@ -15,7 +15,7 @@ public class Types {
     }
 
     public static boolean isNumberOrPrimitive(Class<?> clazz) {
-        return isNumber(clazz) || clazz.isPrimitive();
+        return isNumber(clazz) || clazz.isPrimitive() || Boolean.class.equals(clazz);
     }
 
     public static boolean isDouble(Class<?> clazz) {
@@ -50,8 +50,12 @@ public class Types {
         return clazz.equals(String.class);
     }
 
+    public static boolean isPrimitiveBytes(Class<?> clazz) {
+        return clazz.equals(byte[].class);
+    }
+
     public static boolean isBytes(Class<?> clazz) {
-        return clazz.equals(byte[].class) || clazz.equals(Byte[].class);
+        return isPrimitiveBytes(clazz) || clazz.equals(Byte[].class);
     }
 
     public static boolean isDate(Class<?> clazz) {

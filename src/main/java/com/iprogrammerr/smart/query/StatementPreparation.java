@@ -68,7 +68,7 @@ public class StatementPreparation {
         Class<?> clazz = value.getClass();
         if (Types.isString(clazz)) {
             setValue(prepared, index, (String) value);
-        } else if (Types.isBytes(clazz)) {
+        } else if (Types.isPrimitiveBytes(clazz)) {
             setValue(prepared, index, (byte[]) value);
         } else if (Types.isSqlDate(clazz)) {
             setValue(prepared, index, (Date) value);
