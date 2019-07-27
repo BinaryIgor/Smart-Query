@@ -1,7 +1,5 @@
 package com.iprogrammerr.smart.query;
 
-import java.util.Collection;
-
 public interface Query {
 
     Query sql(String sql);
@@ -15,10 +13,6 @@ public interface Query {
     <T> T fetch(ResultMapping<T> mapping);
 
     <T> T fetch(Class<T> clazz);
-
-    <T> void fetchInto(Collection<T> container, ResultMapping<T> mapping);
-
-    <T> void fetchInto(Collection<T> container, Class<T> clazz);
 
     void execute();
 

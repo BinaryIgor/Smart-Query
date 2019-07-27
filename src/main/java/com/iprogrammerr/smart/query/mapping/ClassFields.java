@@ -22,7 +22,7 @@ public class ClassFields {
 
     @Override
     public String toString() {
-        return "MappingFields{" +
+        return "ClassFields{" +
             "fieldTypes=" + fieldTypes +
             '}';
     }
