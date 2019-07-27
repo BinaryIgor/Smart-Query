@@ -13,6 +13,7 @@ import com.iprogrammerr.smart.query.example.BookWithUser;
 import com.iprogrammerr.smart.query.example.User;
 import com.iprogrammerr.smart.query.example.UserBook;
 import com.iprogrammerr.smart.query.example.UserRecord;
+import com.iprogrammerr.smart.query.mapping.clazz.ClassMapping;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;

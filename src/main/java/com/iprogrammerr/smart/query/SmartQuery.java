@@ -1,6 +1,6 @@
 package com.iprogrammerr.smart.query;
 
-import com.iprogrammerr.smart.query.mapping.ClassMapping;
+import com.iprogrammerr.smart.query.mapping.clazz.ClassMapping;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

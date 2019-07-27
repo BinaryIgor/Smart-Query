@@ -1,7 +1,7 @@
 package com.iprogrammerr.smart.query.example;
 
-import com.iprogrammerr.smart.query.mapping.Embedded;
-import com.iprogrammerr.smart.query.mapping.Mapping;
+import com.iprogrammerr.smart.query.mapping.clazz.Embedded;
+import com.iprogrammerr.smart.query.mapping.clazz.Mapping;
 
 import java.util.Objects;
 

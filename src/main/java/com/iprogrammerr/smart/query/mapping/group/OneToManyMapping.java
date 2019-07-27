@@ -1,14 +1,13 @@
-package com.iprogrammerr.smart.query.mapping;
+package com.iprogrammerr.smart.query.mapping.group;
 
 import com.iprogrammerr.smart.query.ResultMapping;
+import com.iprogrammerr.smart.query.mapping.clazz.ClassMapping;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-public class OneToManyMapping<T, R> implements GroupsMapping<T, List<R>> {
+public class OneToManyMapping<T, R> implements ResultMapping<List<OneToMany<T, R>>> {
 
     private final GroupPredicate<T> predicate;
     private final ResultMapping<T> firstMapping;
@@ -34,8 +33,8 @@ public class OneToManyMapping<T, R> implements GroupsMapping<T, List<R>> {
     }
 
     @Override
-    public Map<T, List<R>> value(ResultSet result) throws Exception {
-        Map<T, List<R>> groups = new LinkedHashMap<>();
+    public List<OneToMany<T, R>> value(ResultSet result) throws Exception {
+        List<OneToMany<T, R>> results = new ArrayList<>();
         if (result.next()) {
             do {
                 T key = firstMapping.value(result);
@@ -45,9 +44,9 @@ public class OneToManyMapping<T, R> implements GroupsMapping<T, List<R>> {
                     values.add(secondMapping.value(result));
                     next = result.next() && predicate.belongsTo(key, result);
                 } while (next);
-                groups.put(key, values);
+                results.add(new OneToMany<>(key, values));
             } while (!result.isAfterLast());
         }
-        return groups;
+        return results;
     }
 }

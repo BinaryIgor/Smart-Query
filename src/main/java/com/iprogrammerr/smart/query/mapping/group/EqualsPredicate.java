@@ -1,4 +1,4 @@
-package com.iprogrammerr.smart.query.mapping;
+package com.iprogrammerr.smart.query.mapping.group;
 
 import com.iprogrammerr.smart.query.ResultMapping;
 

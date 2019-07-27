@@ -1,6 +1,6 @@
 package com.iprogrammerr.smart.query.example;
 
-import com.iprogrammerr.smart.query.mapping.Mapping;
+import com.iprogrammerr.smart.query.mapping.clazz.Mapping;
 
 import java.sql.ResultSet;
 import java.util.Objects;

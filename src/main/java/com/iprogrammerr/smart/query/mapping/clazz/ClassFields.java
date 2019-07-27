@@ -1,4 +1,4 @@
-package com.iprogrammerr.smart.query.mapping;
+package com.iprogrammerr.smart.query.mapping.clazz;
 
 import java.lang.reflect.Field;
 import java.util.LinkedHashMap;

@@ -1,4 +1,4 @@
-package com.iprogrammerr.smart.query.mapping;
+package com.iprogrammerr.smart.query.mapping.clazz;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Embedded {
-
+public @interface Mapping {
+    String[] labels() default {};
 }

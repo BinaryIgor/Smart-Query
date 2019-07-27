@@ -1,4 +1,4 @@
-package com.iprogrammerr.smart.query.mapping;
+package com.iprogrammerr.smart.query.mapping.group;
 
 import java.sql.ResultSet;
 

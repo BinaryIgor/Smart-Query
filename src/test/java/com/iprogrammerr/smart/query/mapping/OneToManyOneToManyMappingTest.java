@@ -10,6 +10,7 @@ import com.iprogrammerr.smart.query.example.BookRecord;
 import com.iprogrammerr.smart.query.example.User;
 import com.iprogrammerr.smart.query.example.UserBook;
 import com.iprogrammerr.smart.query.example.UserRecord;
+import com.iprogrammerr.smart.query.mapping.group.OneToManyOneToManyMapping;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;

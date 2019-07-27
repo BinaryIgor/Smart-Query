@@ -4,6 +4,7 @@ import com.iprogrammerr.smart.query.QueryFactory;
 import com.iprogrammerr.smart.query.SmartQueryFactory;
 import com.iprogrammerr.smart.query.TestDatabase;
 import com.iprogrammerr.smart.query.example.Organism;
+import com.iprogrammerr.smart.query.mapping.group.ManyMapping;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
