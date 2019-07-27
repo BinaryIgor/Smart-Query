@@ -16,7 +16,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OneToManyTest {
+public class OneToManyMappingTest {
 
     private QueryFactory factory;
 
