@@ -32,6 +32,20 @@ public class ClassMetaData<T> {
         }
     }
 
+    private void scanFields() {
+        for (Field f : clazz.getDeclaredFields()) {
+            if (Modifier.isStatic(f.getModifiers())) {
+                continue;
+            }
+            Embedded e = f.getAnnotation(Embedded.class);
+            if (e == null) {
+                fieldsTypes.put(f, Type.PRIMITIVE);
+            } else {
+                fieldsTypes.put(f, Type.OBJECT);
+            }
+        }
+    }
+
     private void findConstructor() {
         Class<?>[] ctrTypes = new Class<?>[fieldsTypes.size()];
         int i = 0;
@@ -47,20 +61,6 @@ public class ClassMetaData<T> {
             throw new RuntimeException(String.format(
                 "Cant't find appropriate constructor for declared non-static fields: %s",
                 fieldsTypes.keySet()));
-        }
-    }
-
-    private void scanFields() {
-        for (Field f : clazz.getDeclaredFields()) {
-            if (Modifier.isStatic(f.getModifiers())) {
-                continue;
-            }
-            Embedded e = f.getAnnotation(Embedded.class);
-            if (e == null) {
-                fieldsTypes.put(f, Type.PRIMITIVE);
-            } else {
-                fieldsTypes.put(f, Type.OBJECT);
-            }
         }
     }
 

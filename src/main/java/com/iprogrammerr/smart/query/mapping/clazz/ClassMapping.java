@@ -146,10 +146,16 @@ public class ClassMapping<T> implements ResultMapping<T> {
         Object value;
         if (Types.isString(clazz)) {
             value = result.getString(idx);
-        } else if (Types.isBytes(clazz)) {
+        } else if (Types.isPrimitiveBytes(clazz)) {
             value = result.getBytes(idx);
-        } else if (Types.isDate(clazz)) {
+        } else if (Types.isSqlDate(clazz)) {
             value = result.getDate(idx);
+        } else if (Types.isTime(clazz)) {
+            value = result.getTime(idx);
+        } else if (Types.isTimestamp(clazz)) {
+            value = result.getTimestamp(idx);
+        } else if (Types.isBlob(clazz)) {
+            value = result.getBlob(idx);
         } else {
             value = result.getObject(idx);
         }
