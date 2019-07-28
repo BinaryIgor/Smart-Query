@@ -71,10 +71,10 @@ public class Types {
     }
 
     public static boolean isTimestamp(Class<?> clazz) {
-        return clazz.isAssignableFrom(Timestamp.class);
+        return clazz.equals(Timestamp.class);
     }
 
     public static boolean isBlob(Class<?> clazz) {
-        return clazz.isAssignableFrom(Blob.class);
+        return Blob.class.isAssignableFrom(clazz);
     }
 }
