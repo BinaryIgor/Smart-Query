@@ -14,6 +14,7 @@ import java.util.Map;
 
 public class ClassMapping<T> implements ResultMapping<T> {
 
+    private static final Map<String, ClassMetaData<?>> CLASSES_META_DATA = new HashMap<>();
     private final Class<T> clazz;
     private final boolean moveResult;
 
@@ -31,15 +32,13 @@ public class ClassMapping<T> implements ResultMapping<T> {
         if (moveResult) {
             result.next();
         }
-        ClassFields fields = fields();
+        ClassMetaData<T> metaData = metaData();
         Map<String, Integer> labelsIndices = labelsIndices(result.getMetaData());
-        Class<?>[] ctrTypes = new Class<?>[fields.size()];
-        Object[] values = new Object[fields.size()];
+        Object[] values = new Object[metaData.countFields()];
         int i = 0;
-        for (Map.Entry<Field, ClassFields.Type> e : fields.fieldTypes.entrySet()) {
+        for (Map.Entry<Field, ClassMetaData.Type> e : metaData.fieldsTypes.entrySet()) {
             Field f = e.getKey();
-            ctrTypes[i] = f.getType();
-            if (e.getValue() == ClassFields.Type.PRIMITIVE) {
+            if (e.getValue() == ClassMetaData.Type.PRIMITIVE) {
                 int idx = fieldIndex(f, labelsIndices);
                 if (idx >= 0) {
                     values[i] = fieldValue(f.getType(), idx, result);
@@ -49,14 +48,11 @@ public class ClassMapping<T> implements ResultMapping<T> {
             }
             i++;
         }
-        return newInstance(clazz.getConstructor(ctrTypes), values, fields);
+        return newInstance(metaData, values);
     }
 
-    private T newInstance(Constructor<T> constructor, Object[] values, ClassFields fields) {
-        if (constructor == null) {
-            throw new RuntimeException(String.format(
-                "Cant't find appropriate constructor for declared non-static fields: %s", fields));
-        }
+    private T newInstance(ClassMetaData<T> metaData, Object[] values) {
+        Constructor<T> constructor = metaData.constructor();
         try {
             return constructor.newInstance(values);
         } catch (Exception e) {
@@ -84,20 +80,30 @@ public class ClassMapping<T> implements ResultMapping<T> {
         return labelsIndices;
     }
 
-    private ClassFields fields() {
-        ClassFields fields = new ClassFields();
+    @SuppressWarnings("unchecked")
+    private ClassMetaData<T> metaData() {
+        if (CLASSES_META_DATA.containsKey(metaDataKey())) {
+            return (ClassMetaData<T>) CLASSES_META_DATA.get(metaDataKey());
+        }
+        ClassMetaData<T> metaData = new ClassMetaData<>(clazz);
         for (Field f : clazz.getDeclaredFields()) {
             if (Modifier.isStatic(f.getModifiers())) {
                 continue;
             }
             Embedded e = f.getAnnotation(Embedded.class);
             if (e == null) {
-                fields.putPrimitive(f);
+                metaData.putPrimitive(f);
             } else {
-                fields.putObject(f);
+                metaData.putObject(f);
             }
         }
-        return fields;
+        CLASSES_META_DATA.put(metaDataKey(), metaData);
+        metaData.findConstructor();
+        return metaData;
+    }
+
+    private String metaDataKey() {
+        return clazz.getName();
     }
 
     private int fieldIndex(Field field, Map<String, Integer> labelsIndices) {
