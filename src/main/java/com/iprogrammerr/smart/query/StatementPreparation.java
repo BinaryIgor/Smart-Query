@@ -31,6 +31,10 @@ public class StatementPreparation {
         return ps;
     }
 
+    public PreparedStatement prepare(String query, List<Object> values) throws Exception {
+        return prepare(query, values, false);
+    }
+
     private int jdbcIndex(int index) {
         return index + 1;
     }
