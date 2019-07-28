@@ -8,8 +8,10 @@ import org.mockito.Mockito;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StatementPreparationTest {
@@ -27,73 +29,87 @@ public class StatementPreparationTest {
 
     @Test
     public void setsDoubles() {
-        setsNumbers(Double.class, 4.5, 5.6);
+        setsValues("INSERT INTO measures(?, ?)", m -> m.setDouble(Mockito.anyInt(), Mockito.anyDouble()),
+            4.5, 5.6);
     }
 
-    private <T extends Number> void setsNumbers(Class<T> clazz, T first, T second) {
+    private <T> void setsValues(String sql, StatementMockPreparation mockPreparation, T value, T... values) {
+        List<Object> allValues = new ArrayList<>();
+        allValues.add(value);
+        allValues.addAll(Arrays.asList(values));
+
         Map<Integer, T> argsCapture = new HashMap<>();
         Mockito.doAnswer(a -> {
             argsCapture.put(a.getArgument(0), a.getArgument(1));
             return true;
         }).when(statement);
 
-        prepareNumbersStatement(clazz, first, second);
+        try {
+            mockPreparation.prepare(statement);
+            prepareStatement(sql, allValues);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        MatcherAssert.assertThat(argsCapture, Matchers.hasEntry(1, first));
-        MatcherAssert.assertThat(argsCapture, Matchers.hasEntry(2, second));
+        for (int i = 0; i < allValues.size(); i++) {
+            MatcherAssert.assertThat(argsCapture, Matchers.hasEntry(i + 1, allValues.get(i)));
+        }
     }
 
-    private <T extends Number> void prepareNumbersStatement(Class<T> clazz, T first, T second) {
+    private void prepareStatement(String sql, List<Object> values) {
         try {
-            if (Types.isDouble(clazz)) {
-                statement.setDouble(Mockito.anyInt(), Mockito.anyDouble());
-            } else if (Types.isFloat(clazz)) {
-                statement.setFloat(Mockito.anyInt(), Mockito.anyFloat());
-            } else if (Types.isLong(clazz)) {
-                statement.setLong(Mockito.anyInt(), Mockito.anyLong());
-            } else if (Types.isInt(clazz)) {
-                statement.setInt(Mockito.anyInt(), Mockito.anyInt());
-            } else if (Types.isShort(clazz)) {
-                statement.setShort(Mockito.anyInt(), Mockito.anyShort());
-            } else {
-                statement.setByte(Mockito.anyInt(), Mockito.anyByte());
-            }
-
-            String sql = "INSERT INTO measures(?, ?)";
-            prepareStatement(sql);
-            preparation.prepare(sql, Arrays.asList(first, second));
+            Mockito.when(connection.prepareStatement(Mockito.eq(sql), Mockito.anyInt(), Mockito.anyInt(),
+                Mockito.anyInt())).thenReturn(statement);
+            preparation.prepare(sql, values);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void prepareStatement(String sql) throws Exception {
-        Mockito.when(connection.prepareStatement(Mockito.eq(sql), Mockito.anyInt(), Mockito.anyInt(),
-            Mockito.anyInt())).thenReturn(statement);
-    }
-
     @Test
     public void setsFloats() {
-        setsNumbers(Float.class, 4.4f, -8.4f);
+        setsValues("INSERT INTO floats(?, ?, ?)", m -> m.setFloat(Mockito.anyInt(), Mockito.anyFloat()),
+            4.4f, -8.4f, 44f);
     }
 
     @Test
     public void setsLongs() {
-        setsNumbers(Long.class, 2L, 4L);
+        setsValues("SELECT * FROM longs WHERE longest = ? and shortest = ?",
+            m -> m.setLong(Mockito.anyInt(), Mockito.anyLong()),
+            4L, -4L);
     }
 
     @Test
     public void setsInts() {
-        setsNumbers(Integer.class, 1, -33);
+        setsValues("SELECT * FROM ints WHERE min > ? and max < ?", m -> m.setInt(Mockito.anyInt(), Mockito.anyInt()),
+            -33, 44);
     }
 
     @Test
     public void setsShorts() {
-        setsNumbers(Short.class, (short) 3, (short) 4);
+        setsValues("INSERT INTO shorts(?, ?)", m -> m.setShort(Mockito.anyInt(), Mockito.anyShort()),
+            (short) 3, (short) 4);
     }
 
     @Test
     public void setsBytes() {
-        setsNumbers(Byte.class, (byte) 22, (byte) -33);
+        setsValues("INSERT INTO bytes(?, ?, ?)", m -> m.setByte(Mockito.anyInt(), Mockito.anyByte()),
+            (byte) 1, (byte) 33, (byte) 44);
+    }
+
+    @Test
+    public void setsBooleans() {
+        setsValues("UPDATE booleans set true = ?, false = ?", m -> m.setBoolean(Mockito.anyInt(), Mockito.anyBoolean()),
+            false, true);
+    }
+
+    @Test
+    public void setsStrings() {
+        setsValues("INSERT INTO strings(?, ?, ?, ?)", m -> m.setString(Mockito.anyInt(), Mockito.anyString()),
+            "a", "aa", "bb", "b");
+    }
+
+    private interface StatementMockPreparation {
+        void prepare(PreparedStatement mock) throws Exception;
     }
 }
