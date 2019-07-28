@@ -11,9 +11,9 @@ public class Pet {
     public static final String USER_ID = "user_id";
     public static final String NAME = "name";
 
-    @Mapping(labels = {"p_id", USER_ID})
+    @Mapping({"p_id", USER_ID})
     public final Integer userId;
-    @Mapping(labels = "p_name")
+    @Mapping("p_name")
     public final String name;
 
     public Pet(Integer userId, String name) {

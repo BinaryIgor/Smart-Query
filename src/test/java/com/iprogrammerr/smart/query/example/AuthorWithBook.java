@@ -13,7 +13,7 @@ public class AuthorWithBook {
     public final Author author;
     @Embedded
     public final Book book;
-    @Mapping(labels = "books")
+    @Mapping("books")
     public final int booksCount;
 
     public AuthorWithBook(Author author, Book book, int booksCount) {

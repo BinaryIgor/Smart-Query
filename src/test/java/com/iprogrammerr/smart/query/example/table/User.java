@@ -11,9 +11,9 @@ public class User {
     public static final String ID = "id";
     public static final String NAME = "name";
 
-    @Mapping(labels = {"u_" + ID, "u" + ID})
+    @Mapping({"u_" + ID, "u" + ID})
     public final int id;
-    @Mapping(labels = {"u_" + NAME, "u" + NAME})
+    @Mapping({"u_" + NAME, "u" + NAME})
     public final String name;
 
     public User(int id, String name) {

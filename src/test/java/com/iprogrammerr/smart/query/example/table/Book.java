@@ -12,9 +12,9 @@ public class Book {
     public static final String AUTHOR_ID = "author_id";
     public static final String TITLE = "title";
 
-    @Mapping(labels = "bid")
+    @Mapping("bid")
     public final Integer id;
-    @Mapping(labels = AUTHOR_ID)
+    @Mapping(AUTHOR_ID)
     public final Integer authorId;
     public final String title;
 

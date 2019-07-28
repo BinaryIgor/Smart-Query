@@ -104,7 +104,7 @@ public class ClassMapping<T> implements ResultMapping<T> {
         int idx = -1;
         Mapping mapping = field.getAnnotation(Mapping.class);
         if (mapping != null) {
-            for (String l : mapping.labels()) {
+            for (String l : mapping.value()) {
                 idx = labelsIndices.getOrDefault(l.toLowerCase(), -1);
                 if (idx >= 0) {
                     break;

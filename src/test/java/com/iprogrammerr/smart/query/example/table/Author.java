@@ -13,10 +13,10 @@ public class Author {
     public static final String ALIAS = "alias";
     public static final String ALIAS_ANONYM = "anonym";
 
-    @Mapping(labels = "aid")
+    @Mapping("aid")
     public final long id;
     public final String name;
-    @Mapping(labels = ALIAS_ANONYM)
+    @Mapping(ALIAS_ANONYM)
     public final String alias;
 
     public Author(long id, String name, String alias) {
