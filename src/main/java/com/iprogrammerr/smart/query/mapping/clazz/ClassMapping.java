@@ -5,16 +5,16 @@ import com.iprogrammerr.smart.query.Types;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ClassMapping<T> implements ResultMapping<T> {
 
-    private static final Map<String, ClassMetaData<?>> CLASSES_META_DATA = new HashMap<>();
+    private static final Map<String, ClassMetaData<?>> CLASSES_META_DATA = new ConcurrentHashMap<>();
     private final Class<T> clazz;
     private final boolean moveResult;
 
@@ -34,11 +34,11 @@ public class ClassMapping<T> implements ResultMapping<T> {
         }
         ClassMetaData<T> metaData = metaData();
         Map<String, Integer> labelsIndices = labelsIndices(result.getMetaData());
-        Object[] values = new Object[metaData.countFields()];
+        Object[] values = new Object[metaData.fieldsWithTypes().size()];
         int i = 0;
-        for (Map.Entry<Field, ClassMetaData.Type> e : metaData.fieldsTypes.entrySet()) {
+        for (Map.Entry<Field, ClassMetaData.Type> e : metaData.fieldsWithTypes().entrySet()) {
             Field f = e.getKey();
-            if (e.getValue() == ClassMetaData.Type.PRIMITIVE) {
+            if (e.getValue().isPrimitive()) {
                 int idx = fieldIndex(f, labelsIndices);
                 if (idx >= 0) {
                     values[i] = fieldValue(f.getType(), idx, result);
@@ -82,28 +82,14 @@ public class ClassMapping<T> implements ResultMapping<T> {
 
     @SuppressWarnings("unchecked")
     private ClassMetaData<T> metaData() {
-        if (CLASSES_META_DATA.containsKey(metaDataKey())) {
-            return (ClassMetaData<T>) CLASSES_META_DATA.get(metaDataKey());
+        String key = clazz.getName();
+        if (CLASSES_META_DATA.containsKey(key)) {
+            return (ClassMetaData<T>) CLASSES_META_DATA.get(key);
         }
         ClassMetaData<T> metaData = new ClassMetaData<>(clazz);
-        for (Field f : clazz.getDeclaredFields()) {
-            if (Modifier.isStatic(f.getModifiers())) {
-                continue;
-            }
-            Embedded e = f.getAnnotation(Embedded.class);
-            if (e == null) {
-                metaData.putPrimitive(f);
-            } else {
-                metaData.putObject(f);
-            }
-        }
-        CLASSES_META_DATA.put(metaDataKey(), metaData);
-        metaData.findConstructor();
+        CLASSES_META_DATA.put(key, metaData);
+        metaData.init();
         return metaData;
-    }
-
-    private String metaDataKey() {
-        return clazz.getName();
     }
 
     private int fieldIndex(Field field, Map<String, Integer> labelsIndices) {
