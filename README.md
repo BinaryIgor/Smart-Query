@@ -105,7 +105,7 @@ public class BookWithUser {
     .query()
     .fetch(Mappings.ofClass(BookWithUser.class));
 ```
-In the above example ClassMapping will look for integer of labels: bid, b_id and bookid in the ResultSet. If mapping isn't specified in the annotation only field name will be used. If it is, all labels are used to search(ingoringCase on both sides) for value untill one of them will be present in a given result. Otherwise, null will be inserted(if it's an object, exception will be thrown otherwise). **The only requirement is a constructor with all arguments in the same order as fields declaration**.  You can also embed other objects as follows:
+In the above example ClassMapping will look for integer of labels: bid, b_id and bookid in the ResultSet. If mapping isn't specified in the annotation only field name will be used. If it is, all labels are used to search(ignoringCase on both sides) for value untill one of them will be present in a given result. Otherwise, null will be inserted(if it's an object, exception will be thrown otherwise). **The only requirement is a constructor with all arguments in the same order as fields declaration**.  You can also embed other objects as follows:
 ```java
 public class AuthorWithBook {
 
