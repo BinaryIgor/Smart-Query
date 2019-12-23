@@ -6,7 +6,7 @@
 
     <groupId>com.iprogrammerr</groupId>
     <artifactId>smart-query</artifactId>
-    <version>1.5.0</version>
+    <version>1.5.1</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>
@@ -24,7 +24,7 @@
     <developers>
         <developer>
             <name>Igor Roztropiński</name>
-            <email>ceigor94@gmail.com</email>
+            <email>iroztropinski@gmail.com</email>
             <organization>Iprogrammerr</organization>
             <organizationUrl>http://www.iprogrammerr.com</organizationUrl>
         </developer>
